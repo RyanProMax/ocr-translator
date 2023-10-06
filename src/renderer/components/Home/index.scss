@@ -1,0 +1,39 @@
+@import '../../styles/common.scss';
+
+.home {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  border-radius: 8px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  font-weight: bold;
+  color: #fff;
+
+  &-control-bar {
+    padding: 6px 12px;
+    background-color: rgba(32, 32, 32, 0.72);
+
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &-content {
+    background-color: rgba(0, 0, 0, 0.72);
+    padding: 8px 12px;
+    flex: 1;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  &-footer {
+    padding: 6px 12px;
+    background-color: rgba(32, 32, 32, 0.72);
+  }
+}

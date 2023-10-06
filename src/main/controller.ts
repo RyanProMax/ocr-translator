@@ -25,6 +25,12 @@ export class Controller {
 
       this.mainWindow = createWindow({
         htmlFileName: Pages.Home,
+        browserWindowOptions: {
+          minWidth: 360,
+          minHeight: 160,
+          width: 720,
+          height: 160,
+        },
         onClose: () => {
           this.mainWindow = null;
         }

@@ -1,6 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import {
+  app, BrowserWindow, BrowserWindowConstructorOptions,
+} from 'electron';
 import path from 'path';
 import { URL } from 'url';
+import { merge } from 'lodash';
 
 import { port } from './env';
 
@@ -31,20 +34,30 @@ export const removeFileExtname = (fileName: string) => {
   return path.basename(fileName, path.extname(fileName));
 };
 
-export const createWindow = ({ htmlFileName, minimize = false, onClose = () => {} }: {
+export const createWindow = ({
+  htmlFileName, minimize = false, browserWindowOptions = {},
+  onClose = () => { }
+}: {
   htmlFileName: string,
   minimize?: boolean,
+  browserWindowOptions?: BrowserWindowConstructorOptions
   onClose?: () => unknown
 }) => {
-  const browserWindow = new BrowserWindow({
+  const defaultOptions: BrowserWindowConstructorOptions = {
     show: false,
     width: 1024,
     height: 728,
+    transparent: true,
+    autoHideMenuBar: true,
+    frame: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: getPreloadPath(),
     },
-  });
+  };
+  const browserWindow = new BrowserWindow(
+    merge(defaultOptions, browserWindowOptions)
+  );
 
   browserWindow.loadURL(getHtmlPath(htmlFileName));
 
