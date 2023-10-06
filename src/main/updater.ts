@@ -44,7 +44,7 @@ export function checkUpdate(): Promise<void> {
       updaterLogger.info('update-available', versionAvailable);
       const confirmUpdate = dialog.showMessageBoxSync({
         type: 'info',
-        title: 'ElectronReactRspack: new version',
+        title: 'OCR Translator: new version',
         message: 'There is a new version, update now ?',
         buttons: ['cancel', 'update'],
       });

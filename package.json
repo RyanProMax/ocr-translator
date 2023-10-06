@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-rspack",
+  "name": "ocr-translator",
   "author": "Ryan",
-  "version": "0.0.3",
-  "description": "An Electron boilerplate including TypeScript, React, Rspack and ESLint.",
+  "version": "0.0.1",
+  "description": "Real-time screen capture, OCR and translation tool.",
   "main": "build/loader.js",
   "scripts": {
     "start": "npm run start:preload && npm run start:renderer",
@@ -18,12 +18,10 @@
     "package": "npm run build && electron-builder build -c ./build.config.json --publish always"
   },
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "typescript",
-    "ts",
-    "rspack"
+    "ocr",
+    "translator",
+    "real-time",
+    "screen capture"
   ],
   "devDependencies": {
     "@rspack/cli": "^0.3.6",
