@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { createWindow } from '../common/utils';
 import { Channels, Pages } from '../common/constant';
 import { logger } from './logger';
-import { checkUpdate } from './updater';
+// import { checkUpdate } from './updater';
 
 export class Controller {
   mainWindow: BrowserWindow | null = null;
@@ -21,7 +21,7 @@ export class Controller {
 
       this.register();
       await app.whenReady();
-      checkUpdate();
+      // checkUpdate();
 
       this.mainWindow = createWindow({
         htmlFileName: Pages.Home,
