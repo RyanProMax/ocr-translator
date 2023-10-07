@@ -3,6 +3,9 @@ import path from 'path';
 
 const baseConfiguration: Configuration = {
   target: 'electron-preload',
+  resolve: {
+    tsConfigPath: path.resolve(process.cwd(), './tsconfig.json'),
+  },
   entry: {
     preload: path.join(__dirname, 'index.ts'),
   },

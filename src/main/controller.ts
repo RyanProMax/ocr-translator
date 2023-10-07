@@ -9,9 +9,9 @@ export class Controller {
   mainWindow: BrowserWindow | null = null;
   logger = logger.scope('controller');
 
-  async init() {
+  async startApp() {
     try {
-      this.logger.info('init app');
+      this.logger.info('app start');
 
       app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
@@ -45,15 +45,19 @@ export class Controller {
           });
         }
       });
-      this.logger.info('init app success');
+      this.logger.info('app start success');
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error('app start error', e);
     }
   }
 
   register() {
     ipcMain.handle(Channels.CreateWindow, async (_, ...args: Parameters<typeof createWindow>) => {
       return Boolean(createWindow(args[0]));
+    });
+    ipcMain.on(Channels.Quit, () => {
+      this.logger.info('app quit');
+      app.quit();
     });
   }
 }

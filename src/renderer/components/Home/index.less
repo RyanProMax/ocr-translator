@@ -1,9 +1,6 @@
 @import '../../styles/common.less';
 
 .home {
-  // if use drag, will lose mouse event
-  // -webkit-app-region: drag;
-
   width: 100vw;
   height: 100vh;
   box-sizing: border-box;
@@ -17,12 +14,49 @@
   color: #fff;
 
   &-control-bar {
-    padding: 6px 12px;
-    background-color: rgba(32, 32, 32, 0.72);
+    // if use drag, will lose mouse event
+    -webkit-app-region: drag;
+    padding: 4px 12px;
+    background-color: @bg-32-72;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: relative;
+
+    &__left,
+    &__center,
+    &__right {
+      -webkit-app-region: no-drag;
+      height: 18px;
+      display: flex;
+      align-items: center;
+    }
+
+    &__center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &__right {
+      justify-items: flex-end;
+    }
+
+    &__icon {
+      height: 100%;
+      cursor: pointer;
+      transition: color .25s;
+
+      &:hover {
+        color: @icon-hover-cyan;
+      }
+    }
   }
 
   &-content {
-    background-color: rgba(0, 0, 0, 0.72);
+    background-color: @bg-0-72;
     padding: 8px 12px;
     flex: 1;
     font-size: 24px;
@@ -35,6 +69,6 @@
 
   &-footer {
     padding: 6px 12px;
-    background-color: rgba(32, 32, 32, 0.72);
+    background-color: @bg-32-72;
   }
 }

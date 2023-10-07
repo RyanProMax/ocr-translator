@@ -36,7 +36,7 @@ export const removeFileExtname = (fileName: string) => {
 
 export const createWindow = ({
   htmlFileName, minimize = false, browserWindowOptions = {},
-  onClose = () => { }
+  onClose = () => {}
 }: {
   htmlFileName: string,
   minimize?: boolean,

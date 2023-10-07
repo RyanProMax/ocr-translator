@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { isDev, port } from '../common/env';
+import { isDev, port } from 'src/common/env';
 
 const __ELECTRON_API__ = {
   ipcRenderer,

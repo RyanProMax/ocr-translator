@@ -16,6 +16,9 @@ const entry = keyBy(
 
 const baseConfiguration: Configuration = {
   entry,
+  resolve: {
+    tsConfigPath: path.resolve(process.cwd(), './tsconfig.json'),
+  },
   builtins: {
     html: [
       {
