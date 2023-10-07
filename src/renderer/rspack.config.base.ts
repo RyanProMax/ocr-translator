@@ -13,6 +13,11 @@ const entry = keyBy(
   files.map(f => path.join(entryDir, f)),
   filePath => removeFileExtname(filePath)
 );
+const html = Object.values(Pages).map(filename => ({
+  template: htmlTemplate,
+  filename,
+  chunks: [removeFileExtname(filename)],
+}));
 
 const baseConfiguration: Configuration = {
   entry,
@@ -20,18 +25,7 @@ const baseConfiguration: Configuration = {
     tsConfigPath: path.resolve(process.cwd(), './tsconfig.json'),
   },
   builtins: {
-    html: [
-      {
-        template: htmlTemplate,
-        filename: Pages.Home,
-        chunks: ['home'],
-      },
-      {
-        template: htmlTemplate,
-        filename: Pages.Sub,
-        chunks: ['sub'],
-      }
-    ],
+    html,
   },
   module: {
     rules: [

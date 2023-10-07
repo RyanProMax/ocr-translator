@@ -1,9 +1,11 @@
 export enum Pages {
   Home = 'home.html',
-  Sub = 'sub.html',
+  Capture = 'capture.html',
 }
 
 export enum Channels {
   CreateWindow = 'CreateWindow',
+  CaptureArea = 'CaptureArea',
+  CaptureAreaCancel = 'CaptureAreaCancel',
   Quit = 'Quit',
 }

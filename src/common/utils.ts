@@ -36,11 +36,12 @@ export const removeFileExtname = (fileName: string) => {
 
 export const createWindow = ({
   htmlFileName, minimize = false, browserWindowOptions = {},
-  onClose = () => {}
+  onReadyToShow, onClose = () => {}
 }: {
   htmlFileName: string,
   minimize?: boolean,
   browserWindowOptions?: BrowserWindowConstructorOptions
+  onReadyToShow?: () => unknown
   onClose?: () => unknown
 }) => {
   const defaultOptions: BrowserWindowConstructorOptions = {
@@ -62,10 +63,14 @@ export const createWindow = ({
   browserWindow.loadURL(getHtmlPath(htmlFileName));
 
   browserWindow.on('ready-to-show', () => {
-    if (minimize) {
-      browserWindow.minimize();
+    if (onReadyToShow) {
+      onReadyToShow();
     } else {
-      browserWindow.show();
+      if (minimize) {
+        browserWindow.minimize();
+      } else {
+        browserWindow.show();
+      }
     }
   });
 

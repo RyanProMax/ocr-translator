@@ -1,12 +1,15 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 
 import { createWindow } from '../common/utils';
-import { Channels, Pages } from '../common/constant';
-import { logger } from './logger';
+import { registerBridge } from './register';
+import CaptureScreen from './captureScreen';
 // import { checkUpdate } from './updater';
+import { logger } from './logger';
+import { Pages } from '../common/constant';
 
 export class Controller {
   mainWindow: BrowserWindow | null = null;
+  captureScreen: CaptureScreen = new CaptureScreen();
   logger = logger.scope('controller');
 
   async startApp() {
@@ -19,7 +22,7 @@ export class Controller {
         }
       });
 
-      this.register();
+      registerBridge(this);
       await app.whenReady();
       // checkUpdate();
 
@@ -35,6 +38,7 @@ export class Controller {
           this.mainWindow = null;
         }
       });
+
       app.on('activate', () => {
         if (this.mainWindow === null) {
           this.mainWindow = createWindow({
@@ -45,19 +49,11 @@ export class Controller {
           });
         }
       });
+
+      this.captureScreen.init();
       this.logger.info('app start success');
     } catch (e) {
       this.logger.error('app start error', e);
     }
-  }
-
-  register() {
-    ipcMain.handle(Channels.CreateWindow, async (_, ...args: Parameters<typeof createWindow>) => {
-      return Boolean(createWindow(args[0]));
-    });
-    ipcMain.on(Channels.Quit, () => {
-      this.logger.info('app quit');
-      app.quit();
-    });
   }
 }
