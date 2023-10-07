@@ -1,6 +1,6 @@
 export enum Pages {
   Home = 'home.html',
-  Capture = 'capture.html',
+  Capture = 'captureScreen.html',
 }
 
 export enum Channels {

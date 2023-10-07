@@ -41,6 +41,9 @@ devDependencies:
   concurrently:
     specifier: ^8.2.1
     version: registry.npmmirror.com/concurrently@8.2.1
+  cropperjs:
+    specifier: ^1.6.1
+    version: registry.npmmirror.com/cropperjs@1.6.1
   cross-env:
     specifier: ^7.0.3
     version: registry.npmmirror.com/cross-env@7.0.3
@@ -77,6 +80,9 @@ devDependencies:
   react:
     specifier: ^18.2.0
     version: registry.npmmirror.com/react@18.2.0
+  react-cropper:
+    specifier: ^2.3.3
+    version: registry.npmmirror.com/react-cropper@2.3.3(react@18.2.0)
   react-dom:
     specifier: ^18.2.0
     version: registry.npmmirror.com/react-dom@18.2.0(react@18.2.0)
@@ -4241,6 +4247,12 @@ packages:
     version: 1.1.1
     dev: true
 
+  registry.npmmirror.com/cropperjs@1.6.1:
+    resolution: {integrity: sha512-F4wsi+XkDHCOMrHMYjrTEE4QBOrsHHN5/2VsVAaRq8P7E5z7xQpT75S+f/9WikmBEailas3+yo+6zPIomW+NOA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/cropperjs/-/cropperjs-1.6.1.tgz}
+    name: cropperjs
+    version: 1.6.1
+    dev: true
+
   registry.npmmirror.com/cross-env@7.0.3:
     resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/cross-env/-/cross-env-7.0.3.tgz}
     name: cross-env
@@ -7172,6 +7184,18 @@ packages:
       react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.23.1
+      react: registry.npmmirror.com/react@18.2.0
+    dev: true
+
+  registry.npmmirror.com/react-cropper@2.3.3(react@18.2.0):
+    resolution: {integrity: sha512-zghiEYkUb41kqtu+2jpX2Ntigf+Jj1dF9ew4lAobPzI2adaPE31z0p+5TcWngK6TvmWQUwK3lj4G+NDh1PDQ1w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-cropper/-/react-cropper-2.3.3.tgz}
+    id: registry.npmmirror.com/react-cropper/2.3.3
+    name: react-cropper
+    version: 2.3.3
+    peerDependencies:
+      react: '>=17.0.2'
+    dependencies:
+      cropperjs: registry.npmmirror.com/cropperjs@1.6.1
       react: registry.npmmirror.com/react@18.2.0
     dev: true
 

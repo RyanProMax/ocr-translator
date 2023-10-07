@@ -59,12 +59,23 @@
     background-color: @bg-0-72;
     padding: 8px 12px;
     flex: 1;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #fff;
 
+    display: flex;
+    flex-direction: column;
+
     overflow: auto;
     .scroll-bar();
+
+    &__item {
+      margin-top: 6px;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
   }
 
   &-footer {

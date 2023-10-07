@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import Capture from 'src/renderer/components/Capture';
+import CaptureScreen from 'src/renderer/components/CaptureScreen';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(<Capture />);
+root.render(<CaptureScreen />);

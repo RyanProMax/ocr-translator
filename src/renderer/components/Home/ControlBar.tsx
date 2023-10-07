@@ -2,6 +2,7 @@
 // const homeLogger = log.scope('home');
 
 import classnames from 'classnames';
+import { Tooltip } from '@arco-design/web-react';
 import { IconFullscreen, IconClose } from '@arco-design/web-react/icon';
 
 import { Channels } from 'src/common/constant';
@@ -26,7 +27,9 @@ export default ({ show }: {
       <div className='home-control-bar__left'>
       </div>
       <div className='home-control-bar__center'>
-        <IconFullscreen onClick={onCapture} />
+        <Tooltip position='bottom' color={'rgba(255, 255, 255, 0.85)'} content='capture screen'>
+          <IconFullscreen onClick={onCapture} />
+        </Tooltip>
       </div>
       <div className='home-control-bar__right'>
         <IconClose onClick={onClose} />

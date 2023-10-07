@@ -10,7 +10,11 @@
   ],
   "rules": {
     "no-console": "off",
-    "semi": 2
+    "semi": 2,
+    "quotes": [
+      "error",
+      "single"
+    ]
     // "global-require": "off",
     // "import/no-dynamic-require": "off"
   }
