@@ -1,0 +1,77 @@
+@import '../../styles/common.less';
+
+@pointSize: 5px;
+
+.crop-screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  cursor: crosshair;
+
+  &__cropper {
+    .cropper-container {
+      background-image: none;
+
+      .cropper-drag-box {
+        background-color: transparent;
+      }
+
+      .cropper-crop-box {
+        .cropper-view-box {
+          outline-color: @color-border;
+          background-color: rgba(@color-border, 0.48);
+        }
+
+        .cropper-center {
+          display: none;
+        }
+
+        .cropper-line {
+          background-color: transparent;
+        }
+
+        .cropper-point {
+          width: @pointSize * 2;
+          height: @pointSize * 2;
+          background-color: @color-primary;
+        }
+
+        .point-e {
+          right: -@pointSize;
+        }
+
+        .point-n {
+          top: -@pointSize;
+        }
+
+        .point-w {
+          left: -@pointSize;
+        }
+
+        .point-s {
+          bottom: -@pointSize;
+        }
+
+        .point-nw {
+          left: -@pointSize;
+          top: -@pointSize;
+        }
+
+        .point-ne {
+          right: -@pointSize;
+          top: -@pointSize;
+        }
+
+        .point-sw {
+          left: -@pointSize;
+          bottom: -@pointSize;
+        }
+
+        .point-se {
+          right: -@pointSize;
+          bottom: -@pointSize;
+        }
+      }
+    }
+  }
+}

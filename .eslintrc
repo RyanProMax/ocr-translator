@@ -14,7 +14,8 @@
     "quotes": [
       "error",
       "single"
-    ]
+    ],
+    "@typescript-eslint/no-explicit-any": "off"
     // "global-require": "off",
     // "import/no-dynamic-require": "off"
   }
