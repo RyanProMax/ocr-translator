@@ -1,6 +1,6 @@
 import { Configuration } from '@rspack/cli';
 import path from 'path';
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 
 import baseConfiguration from './rspack.config.base';
 

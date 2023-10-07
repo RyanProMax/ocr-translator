@@ -3,7 +3,7 @@ import {
 } from 'electron';
 import path from 'path';
 import { URL } from 'url';
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 
 import { port } from './env';
 

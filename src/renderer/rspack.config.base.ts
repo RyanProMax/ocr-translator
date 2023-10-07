@@ -1,7 +1,7 @@
 import { Configuration } from '@rspack/cli';
 import path from 'path';
 import fse from 'fs-extra';
-import { keyBy } from 'lodash';
+import keyBy from 'lodash/keyBy';
 
 import { Pages } from '../common/constant';
 import { removeFileExtname } from '../common/utils';
