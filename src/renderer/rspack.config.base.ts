@@ -38,8 +38,8 @@ const baseConfiguration: Configuration = {
         use: ['@svgr/webpack'],
       },
       {
-        test: /\.s?(c|a)ss$/,
-        use: ['sass-loader'],
+        test: /\.less$/,
+        use: ['less-loader'],
         type: 'css',
       },
     ],

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import ControlBar from './ControlBar';
 
-import './index.scss';
+import './index.less';
 
 // const homeLogger = log.scope('home');
 

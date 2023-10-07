@@ -1,11 +1,10 @@
-@import './scroll-bar.scss';
+@import './scroll-bar.less';
 
 body {
   margin: 0;
   padding: 0;
 
-  -webkit-app-region: drag;
-  @include scroll-bar();
-
   font-family: 'Courier New', Courier, monospace;
+
+  .scroll-bar();
 }
