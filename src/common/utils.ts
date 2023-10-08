@@ -54,6 +54,7 @@ export const createWindow = ({
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: getPreloadPath(),
+      webSecurity: false,
     },
   };
   const browserWindow = new BrowserWindow(

@@ -6,7 +6,7 @@ import IconSetting from 'src/renderer/images/Setting.svg';
 
 export enum Icon {
   ScreenCapture,
-  Start,
+  TriggerStart,
   Setting,
   Close,
 }
@@ -28,7 +28,7 @@ export default ({ show, onClickIcon }: {
           <IconScreenCapture className='arco-icon' onClick={() => onClickIcon(Icon.ScreenCapture)} />
         </div>
         <div title='start' className='home-control-bar__icon-wrapper'>
-          <IconPlayArrow onClick={() => onClickIcon(Icon.Start)} />
+          <IconPlayArrow onClick={() => onClickIcon(Icon.TriggerStart)} />
         </div>
         <div title='setting' className='home-control-bar__icon-wrapper'>
           <IconSetting className='arco-icon' onClick={() => onClickIcon(Icon.Setting)} />

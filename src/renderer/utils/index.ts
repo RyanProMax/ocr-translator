@@ -1,4 +1,5 @@
 import { Rectangle } from 'electron/renderer';
+import axios, { AxiosRequestConfig } from 'axios';
 
 export const createTransparentImage = () => {
   const canvas = document.createElement('canvas');
@@ -50,8 +51,30 @@ export const captureVideo = ({
     outputCanvas.height = bounds.height;
     const imageData = ctx.getImageData(bounds.x, bounds.y, bounds.width, bounds.height);
     outputCtx.putImageData(imageData, 0, 0);
-    return outputCanvas.toDataURL(imageType);
+    return {
+      base64: outputCanvas.toDataURL(imageType),
+    };
   }
 
-  return videoCanvas.toDataURL(imageType);
+  return {
+    base64: videoCanvas.toDataURL(imageType),
+  };
+};
+
+
+export const callApi = ({ domain, api, ...config }: AxiosRequestConfig & {
+  domain?: string
+  api?: string
+}) => {
+  return axios({
+    headers: {
+      Accept: 'application/json',
+      ['Content-Type']: config.method?.toLowerCase() === 'post'
+        ? 'application/x-www-form-urlencoded'
+        : 'application/json',
+    },
+    url: `${domain}${api}`,
+    method: 'get',
+    ...config,
+  });
 };

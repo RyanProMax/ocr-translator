@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Rectangle } from 'electron/renderer';
 import classnames from 'classnames';
+import { round } from 'lodash-es';
 import log from 'electron-log/renderer';
 
 import { captureVideo, ipcRenderer, loadStream } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
 import ControlBar, { Icon } from './ControlBar';
+import { ocrInstance } from './OCR';
 import { Channels } from 'src/common/constant';
 
 import './index.less';
@@ -25,13 +27,23 @@ export type Tips = {
 }
 
 export default () => {
-  const [content] = useState(DEFAULT_TEXT);
+  const [content, setContent] = useState(DEFAULT_TEXT);
   const [tips, setTips] = useState<Tips | null>(null);
   const [cursorEnter, setCursorEnter] = useState(false);
   const [isResize, setIsResize] = useState(false);
   const [start, setStart] = useState(false);
   const showControlBar = cursorEnter || isResize;
-  const [url, setUrl] = useState('');
+  const looperRef = useRef<{ start: boolean, timer: number | null }>({
+    start: false,
+    timer: null
+  });
+
+  const clearTimer = () => {
+    if (looperRef.current.timer) {
+      window.clearTimeout(looperRef.current.timer);
+      looperRef.current.timer = null;
+    }
+  };
 
   // capture desktop stream
   const looper = async (params: {
@@ -39,14 +51,29 @@ export default () => {
     timeout?: number
     bounds?: Rectangle
   }) => {
-    const { video, timeout = 0, bounds } = params;
-    // const startTime = Date.now();
-    const _url = captureVideo({ video, bounds });
-    setUrl(_url);
-    timeout > 0 && setTimeout(() => {
-      looper(params);
-    }, timeout);
-    // homeLogger.info('looper', `cost: ${Date.now() - startTime}ms`);
+    try {
+      const startTime = Date.now();
+      const { video, timeout = 0, bounds } = params;
+      const { base64 } = captureVideo({ video, bounds });
+      const words_result = await ocrInstance.fetchOCR({
+        image: base64
+      });
+      setContent(words_result.map(({ words }: { words: string }) => ({
+        text: words,
+        fontSize: 16
+      })));
+      if (timeout > 0 && looperRef.current.start) {
+        clearTimer();
+        looperRef.current.timer = window.setTimeout(() => {
+          looper(params);
+        }, timeout);
+      }
+      const cost = Date.now() - startTime;
+      console.log('looper cost', cost);
+      setTips({ type: 'info', message: `cost ${round(cost / 1000, 2)}s` });
+    } catch (e) {
+      homeLogger.error('looper error', e);
+    }
   };
 
   const onClickIcon = async (type: Icon) => {
@@ -55,8 +82,9 @@ export default () => {
       case Icon.ScreenCapture: {
         return ipcRenderer.send(Channels.CropScreenShow);
       }
-      case Icon.Start: {
+      case Icon.TriggerStart: {
         if (!start) {
+          looperRef.current.start = true;
           const result = await ipcRenderer.invoke(Channels.GetScreenSource);
           homeLogger.info('invoke GetScreenSource', result);
           const { errorMessage, data } = result;
@@ -66,9 +94,16 @@ export default () => {
             setTips(null);
             const { id, bounds } = data;
             const video = await loadStream(id);
-            looper({ video, timeout: 200, bounds });
+            looper({ video, timeout: 2000, bounds });
             setStart(true);
           }
+        } else {
+          // stop
+          looperRef.current.start = false;
+          clearTimer();
+          setStart(false);
+          setContent(DEFAULT_TEXT);
+          setTips(null);
         }
         return;
       }
@@ -122,7 +157,6 @@ export default () => {
           {tips.message}
         </div>
       ) : null}
-      <img src={url} />
     </div>
   );
 };
