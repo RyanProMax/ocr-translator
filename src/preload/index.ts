@@ -2,7 +2,12 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { isDev, port } from 'src/common/env';
 
 const __ELECTRON_API__ = {
-  ipcRenderer,
+  ipcRenderer: {
+    ...ipcRenderer,
+    // https://stackoverflow.com/questions/66913598/ipcrenderer-on-is-not-a-function
+    on: ipcRenderer.on.bind(ipcRenderer),
+    removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
+  },
 };
 const __ENV__ = {
   env: process.env.NODE_ENV,

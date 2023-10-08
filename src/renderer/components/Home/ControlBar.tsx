@@ -10,7 +10,7 @@ export default ({ show }: {
   show: boolean
 }) => {
   const onCrop = () => {
-    return window.__ELECTRON__.ipcRenderer.send(Channels.CropScreen);
+    return window.__ELECTRON__.ipcRenderer.send(Channels.CropScreenShow);
   };
 
   const onClose = () => {

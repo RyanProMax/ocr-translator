@@ -16,19 +16,25 @@ export function registerBridge(controller: Controller) {
     app.quit();
   });
 
-  // crop screen
-  ipcMain.on(Channels.CropScreen, () => {
+  // show crop screen
+  ipcMain.on(Channels.CropScreenShow, () => {
     controller.logger.info('crop area');
-    controller.captureScreen.cropWindow?.show();
+    const { cropWindow } = controller.captureScreen;
+    if (cropWindow) {
+      // reset crop area
+      cropWindow.webContents.send(Channels.UpdateCropArea);
+      // trigger after ipc event
+      cropWindow.show();
+    }
   });
-  ipcMain.on(Channels.CropScreenCancel, () => {
-    controller.logger.info('crop area cancel');
+  // hide crop screen
+  ipcMain.on(Channels.CropScreenHide, () => {
+    controller.logger.info('crop screen hide');
     controller.captureScreen.cropWindow?.hide();
   });
   ipcMain.on(Channels.CropScreenConfirm, (_, data) => {
-    controller.logger.info('crop area confirm', data);
-    const { cropWindow, captureWindow } = controller.captureScreen;
-    cropWindow?.hide();
+    controller.logger.info('crop screen confirm', data);
+    const { captureWindow } = controller.captureScreen;
     if (captureWindow) {
       captureWindow.setBounds({
         width: Math.max(Math.ceil(data.width), 100),
