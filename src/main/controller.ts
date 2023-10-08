@@ -22,9 +22,18 @@ export class Controller {
         }
       });
 
-      registerBridge(this);
+      app.on('activate', () => {
+        if (this.mainWindow === null) {
+          this.mainWindow = createWindow({
+            htmlFileName: Pages.Home,
+            onClose: () => {
+              this.mainWindow = null;
+            }
+          });
+        }
+      });
+
       await app.whenReady();
-      // checkUpdate();
 
       this.mainWindow = createWindow({
         htmlFileName: Pages.Home,
@@ -38,19 +47,10 @@ export class Controller {
           this.mainWindow = null;
         }
       });
-
-      app.on('activate', () => {
-        if (this.mainWindow === null) {
-          this.mainWindow = createWindow({
-            htmlFileName: Pages.Home,
-            onClose: () => {
-              this.mainWindow = null;
-            }
-          });
-        }
-      });
-
+      registerBridge(this);
+      // checkUpdate();
       this.captureScreen.init();
+
       this.logger.info('app start success');
     } catch (e) {
       this.logger.error('app start error', e);

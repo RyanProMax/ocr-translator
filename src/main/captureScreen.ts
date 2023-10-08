@@ -9,7 +9,7 @@ export default class CaptureScreen {
   captureWindow: BrowserWindow | null = null;
   logger = logger.scope('capture-screen');
 
-  async init() {
+  init() {
     try {
       this.logger.info('init');
 

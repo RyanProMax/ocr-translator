@@ -1,10 +1,11 @@
 // import log from 'electron-log/renderer';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 
 import useDrag from 'src/renderer/hooks/useDrag';
 import ControlBar from './ControlBar';
+import { Channels } from 'src/common/constant';
 
 import './index.less';
 
@@ -20,12 +21,28 @@ const DEFAULT_TEXT = [
 export default () => {
   const [content] = useState(DEFAULT_TEXT);
   const [tips] = useState('');
-  const [showControlBar, setShowControlBar] = useState(false);
+  const [cursorEnter, setCursorEnter] = useState(false);
+  const [isResize, setIsResize] = useState(false);
+  const showControlBar = cursorEnter || isResize;
+
+  useEffect(() => {
+    const handleResize = (_: Electron.IpcRendererEvent, _isResize: boolean) => {
+      console.log('handleResize', handleResize);
+      setIsResize(_isResize);
+    };
+
+    window.__ELECTRON__.ipcRenderer.on(Channels.Resize, handleResize);
+
+    return () => {
+      window.__ELECTRON__.ipcRenderer.removeListener(Channels.Resize, handleResize);
+    };
+  }, []);
+
 
   return (
     <div
-      onMouseEnter={() => setShowControlBar(true)}
-      onMouseLeave={() => setShowControlBar(false)}
+      onMouseEnter={() => setCursorEnter(true)}
+      onMouseLeave={() => setCursorEnter(false)}
       onMouseDown={() => useDrag(true)}
       onMouseUp={() => useDrag(false)}
       onContextMenu={() => useDrag(false)}

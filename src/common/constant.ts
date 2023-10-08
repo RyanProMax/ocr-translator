@@ -11,6 +11,7 @@ export enum Channels {
   CropScreenHide = 'CropScreenHide',
   CropScreenConfirm = 'CropScreenConfirm',
   Drag = 'Drag',
+  Resize = 'Resize',
 
   UpdateCropArea = 'UpdateCropArea',
 }
