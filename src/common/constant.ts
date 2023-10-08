@@ -12,6 +12,7 @@ export enum Channels {
   CropScreenConfirm = 'CropScreenConfirm',
   Drag = 'Drag',
   Resize = 'Resize',
+  StartTranslation = 'StartTranslation',
 
   UpdateCropArea = 'UpdateCropArea',
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 
+import { ipcRenderer } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
 import ControlBar from './ControlBar';
 import { Channels } from 'src/common/constant';
@@ -31,10 +32,10 @@ export default () => {
       setIsResize(_isResize);
     };
 
-    window.__ELECTRON__.ipcRenderer.on(Channels.Resize, handleResize);
+    ipcRenderer.on(Channels.Resize, handleResize);
 
     return () => {
-      window.__ELECTRON__.ipcRenderer.removeListener(Channels.Resize, handleResize);
+      ipcRenderer.removeListener(Channels.Resize, handleResize);
     };
   }, []);
 

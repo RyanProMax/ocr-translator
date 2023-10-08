@@ -2,19 +2,31 @@
 // const homeLogger = log.scope('home');
 
 import classnames from 'classnames';
-import { IconFullscreen, IconClose } from '@arco-design/web-react/icon';
+import { IconClose, IconPlayArrow } from '@arco-design/web-react/icon';
+import IconScreenCapture from 'src/renderer/images/ScreenCapture.svg';
+import IconSetting from 'src/renderer/images/Setting.svg';
 
 import { Channels } from 'src/common/constant';
+import { ipcRenderer } from 'src/renderer/utils';
 
 export default ({ show }: {
   show: boolean
 }) => {
   const onCrop = () => {
-    return window.__ELECTRON__.ipcRenderer.send(Channels.CropScreenShow);
+    return ipcRenderer.send(Channels.CropScreenShow);
   };
 
   const onClose = () => {
-    return window.__ELECTRON__.ipcRenderer.send(Channels.Quit);
+    return ipcRenderer.send(Channels.Quit);
+  };
+
+  const onStart = async () => {
+    const result = await ipcRenderer.invoke(Channels.StartTranslation);
+    console.log('result', result);
+  };
+
+  const onSetting = () => {
+
   };
 
   return (
@@ -27,7 +39,13 @@ export default ({ show }: {
       </div>
       <div className='home-control-bar__center'>
         <div title='capture screen' className='home-control-bar__icon-wrapper'>
-          <IconFullscreen onClick={onCrop} />
+          <IconScreenCapture className='arco-icon' onClick={onCrop} />
+        </div>
+        <div title='start' className='home-control-bar__icon-wrapper'>
+          <IconPlayArrow onClick={onStart} />
+        </div>
+        <div title='setting' className='home-control-bar__icon-wrapper'>
+          <IconSetting className='arco-icon' onClick={onSetting} />
         </div>
       </div>
       <div className='home-control-bar__right'>

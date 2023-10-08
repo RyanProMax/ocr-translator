@@ -1,5 +1,6 @@
 import { Channels } from 'src/common/constant';
+import { ipcRenderer } from '../utils';
 
 export default (active: boolean) => {
-  return window.__ELECTRON__.ipcRenderer.send(Channels.Drag, active);
+  return ipcRenderer.send(Channels.Drag, active);
 }; 

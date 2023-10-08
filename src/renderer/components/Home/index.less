@@ -14,7 +14,7 @@
 
   font-weight: bold;
   color: #fff;
-  
+
   &--show-control-bar &-content {
     border-radius: 0;
   }
@@ -57,12 +57,20 @@
     &__icon-wrapper {
       height: 18px;
 
+      margin-left: 6px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
       .arco-icon {
         height: 100%;
         cursor: pointer;
-        transition: color .25s;
+        fill: #fff;
+        transition: all .25s;
 
         &:hover {
+          fill: @icon-hover-cyan;
           color: @icon-hover-cyan;
         }
       }

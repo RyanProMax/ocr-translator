@@ -8,3 +8,5 @@ export const createTransparentImage = () => {
 
   return canvas.toDataURL('image/png');
 };
+
+export const ipcRenderer = window.__ELECTRON__.ipcRenderer;
