@@ -1,7 +1,9 @@
 // import log from 'electron-log/renderer';
 
 import { useState } from 'react';
+import classnames from 'classnames';
 
+import useDrag from 'src/renderer/hooks/useDrag';
 import ControlBar from './ControlBar';
 
 import './index.less';
@@ -18,10 +20,20 @@ const DEFAULT_TEXT = [
 export default () => {
   const [content] = useState(DEFAULT_TEXT);
   const [tips] = useState('');
+  const [showControlBar, setShowControlBar] = useState(false);
 
   return (
-    <div className='home'>
-      <ControlBar show />
+    <div
+      onMouseEnter={() => setShowControlBar(true)}
+      onMouseLeave={() => setShowControlBar(false)}
+      onMouseDown={() => useDrag(true)}
+      onMouseUp={() => useDrag(false)}
+      onContextMenu={() => useDrag(false)}
+      className={classnames('home', {
+        'home--show-control-bar': showControlBar
+      })}
+    >
+      <ControlBar show={showControlBar} />
       <div className='home-content'>
         {content.map(({ text, fontSize }, idx) => (
           <span key={idx} className='home-content__item' style={{ fontSize }}>
