@@ -1,26 +1,33 @@
-import { isEqual } from 'lodash-es';
 import log from 'electron-log/renderer';
 
-import { baidu } from 'src/common/secret';
+import { Translation as TranslationSecret } from 'src/renderer/utils/secret';
 import { callApi } from 'src/renderer/utils';
 
-export const enum OCRType {
+export const enum TranslationType {
   Baidu
 }
 
+export const enum Language {
+  Auto = 'auto',
+  English = 'en',
+  Chinese = 'zh',
+}
+
+export type BaiduTransResult = {
+  src: string
+  dst: string
+}
+
 const Domain = {
-  [OCRType.Baidu]: 'https://aip.baidubce.com',
+  [TranslationType.Baidu]: 'https://aip.baidubce.com',
 };
 
-class OCR {
-  static instance: OCR | null = null;
+class Translation {
+  static instance: Translation | null = null;
 
-  type = OCRType.Baidu;
+  type = TranslationType.Baidu;
   access_token: string = '';
-  logger = log.scope('ocr');
-
-  private prevImage: string = '';
-  private prevResult: unknown;
+  logger = log.scope('translation');
 
   get domain() {
     return Domain[this.type];
@@ -28,12 +35,12 @@ class OCR {
 
   // diy yourself here
   get secret() {
-    return baidu;
+    return TranslationSecret[this.type];
   }
 
   async getAccessToken() {
     switch (this.type) {
-      case OCRType.Baidu: {
+      case TranslationType.Baidu: {
         const { API_KEY, SECRET_KEY } = this.secret;
         // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
         const { data: { access_token } } = await callApi({
@@ -53,44 +60,39 @@ class OCR {
     }
   }
 
-  async fetchOCR(data: {
-    image: string
-    detect_direction?: boolean
-    paragraph?: boolean
-    probability?: boolean
+  async fetchTranslation(data: {
+    q: string
+    from?: string
+    to?: string
   }) {
     if (!this.access_token) {
       await this.getAccessToken();
     }
-    // simple diff
-    if (isEqual(this.prevImage, data.image)) {
-      this.logger.info('repeat image, skip');
-      return this.prevResult;
-    }
     const { data: resData } = await callApi({
       domain: this.domain,
-      api: '/rest/2.0/ocr/v1/general_basic',
+      headers: {
+        ['Content-Type']: 'application/json'
+      },
+      api: '/rpc/2.0/mt/texttrans/v1',
       method: 'post',
       params: {
         access_token: this.access_token,
       },
       data: {
-        detect_direction: false,
-        paragraph: false,
-        probability: false,
+        from: Language.Auto,
+        to: Language.Chinese,
         ...data
       }
     });
-    this.prevResult = resData.words_result;
-    return resData.words_result;
+    return resData.result;
   }
 
   static getInstance() {
     if (!this.instance) {
-      this.instance = new OCR();
+      this.instance = new Translation();
     }
     return this.instance;
   }
 }
 
-export const ocrInstance = OCR.getInstance();
+export const translation = Translation.getInstance();

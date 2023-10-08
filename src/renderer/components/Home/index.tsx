@@ -6,19 +6,20 @@ import log from 'electron-log/renderer';
 
 import { captureVideo, ipcRenderer, loadStream } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
+import { BaiduOCRItem, ocrInstance } from 'src/renderer/utils/OCR';
 import ControlBar, { Icon } from './ControlBar';
-import { ocrInstance } from './OCR';
 import { Channels } from 'src/common/constant';
 
 import './index.less';
+import { BaiduTransResult, translation } from 'src/renderer/utils/Translation';
 
 const homeLogger = log.scope('home');
 
 const DEFAULT_TEXT = [
   { text: 'Welcome to  OCR Translator.', fontSize: 20 },
   { text: '1. click [capture screen] icon', fontSize: 16 },
-  { text: '2. left click to select region, right click to confirm', fontSize: 16 },
-  { text: '3. click [OCR]', fontSize: 16 },
+  { text: '2. select region', fontSize: 16 },
+  { text: '3. click [start]', fontSize: 16 },
 ];
 
 export type Tips = {
@@ -54,29 +55,43 @@ export default () => {
     try {
       const startTime = Date.now();
       const { video, timeout = 0, bounds } = params;
+
+      // capture frame
       const { base64 } = captureVideo({ video, bounds });
       const captureCost = Date.now() - startTime;
+
+      // OCR
       const ocrStartTime = Date.now();
       const words_result = await ocrInstance.fetchOCR({
         image: base64
       });
       const ocrCost = Date.now() - ocrStartTime;
-      setContent(words_result.map(({ words }: { words: string }) => ({
-        text: words,
-        fontSize: 16
-      })));
+
+      // Translation
+      if (words_result?.length > 0) {
+        const translationStartTime = Date.now();
+        const { trans_result } = await translation.fetchTranslation({
+          q: words_result.map((o: BaiduOCRItem) => o.words).join(' '),
+        });
+        const translationCost = Date.now() - translationStartTime;
+        setContent(trans_result.map(({ dst }: BaiduTransResult) => ({
+          text: dst,
+          fontSize: 16
+        })));
+
+        const cost = Date.now() - startTime;
+        console.log('looper cost', cost);
+        setTips({
+          type: 'info',
+          message: `cost ${round(cost / 1000, 2)}s (capture: ${captureCost}ms, OCR: ${ocrCost}ms, translation: ${translationCost}ms)`
+        });
+      }
       if (timeout > 0 && looperRef.current.start) {
         clearTimer();
         looperRef.current.timer = window.setTimeout(() => {
           looper(params);
         }, timeout);
       }
-      const cost = Date.now() - startTime;
-      console.log('looper cost', cost);
-      setTips({
-        type: 'info',
-        message: `cost ${round(cost / 1000, 2)}s (capture: ${captureCost}ms, OCR: ${ocrCost}ms)`
-      });
     } catch (e) {
       homeLogger.error('looper error', e);
     }
@@ -100,7 +115,7 @@ export default () => {
             setTips(null);
             const { id, bounds } = data;
             const video = await loadStream(id);
-            looper({ video, timeout: 2000, bounds });
+            looper({ video, timeout: 200, bounds });
             setStart(true);
           }
         } else {

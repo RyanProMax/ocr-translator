@@ -62,7 +62,7 @@ export const captureVideo = ({
 };
 
 
-export const callApi = ({ domain, api, ...config }: AxiosRequestConfig & {
+export const callApi = ({ domain, api, headers, ...config }: AxiosRequestConfig & {
   domain?: string
   api?: string
 }) => {
@@ -72,6 +72,7 @@ export const callApi = ({ domain, api, ...config }: AxiosRequestConfig & {
       ['Content-Type']: config.method?.toLowerCase() === 'post'
         ? 'application/x-www-form-urlencoded'
         : 'application/json',
+      ...headers,
     },
     url: `${domain}${api}`,
     method: 'get',
