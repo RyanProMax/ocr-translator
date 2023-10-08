@@ -1,16 +1,16 @@
-// import log from 'electron-log/renderer';
-
 import { useEffect, useState } from 'react';
+import { Rectangle } from 'electron/renderer';
 import classnames from 'classnames';
+import log from 'electron-log/renderer';
 
-import { ipcRenderer } from 'src/renderer/utils';
+import { captureVideo, ipcRenderer, loadStream } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
 import ControlBar, { Icon } from './ControlBar';
 import { Channels } from 'src/common/constant';
 
 import './index.less';
 
-// const homeLogger = log.scope('home');
+const homeLogger = log.scope('home');
 
 const DEFAULT_TEXT = [
   { text: 'Welcome to  OCR Translator.', fontSize: 20 },
@@ -31,16 +31,44 @@ export default () => {
   const [isResize, setIsResize] = useState(false);
   const [start, setStart] = useState(false);
   const showControlBar = cursorEnter || isResize;
+  const [url, setUrl] = useState('');
+
+  // capture desktop stream
+  const looper = async (params: {
+    video: HTMLVideoElement,
+    timeout?: number
+    bounds?: Rectangle
+  }) => {
+    const { video, timeout = 0, bounds } = params;
+    // const startTime = Date.now();
+    const _url = captureVideo({ video, bounds });
+    setUrl(_url);
+    timeout > 0 && setTimeout(() => {
+      looper(params);
+    }, timeout);
+    // homeLogger.info('looper', `cost: ${Date.now() - startTime}ms`);
+  };
 
   const onClickIcon = async (type: Icon) => {
+    homeLogger.info('onClickIcon', type);
     switch (type) {
       case Icon.ScreenCapture: {
         return ipcRenderer.send(Channels.CropScreenShow);
       }
       case Icon.Start: {
         if (!start) {
-          ipcRenderer.send(Channels.StartTranslation);
-          setStart(true);
+          const result = await ipcRenderer.invoke(Channels.GetScreenSource);
+          homeLogger.info('invoke GetScreenSource', result);
+          const { errorMessage, data } = result;
+          if (errorMessage) {
+            setTips({ type: 'error', message: errorMessage });
+          } else {
+            setTips(null);
+            const { id, bounds } = data;
+            const video = await loadStream(id);
+            looper({ video, timeout: 200, bounds });
+            setStart(true);
+          }
         }
         return;
       }
@@ -66,29 +94,6 @@ export default () => {
       ipcRenderer.removeListener(Channels.Resize, handleResize);
     };
   }, []);
-
-  useEffect(() => {
-    if (start) {
-      const updateTranslation = (
-        _: Electron.IpcRendererEvent,
-        data: UpdateTranslation
-      ) => {
-        console.log('handleResult', data);
-        const { errorMessage, imagePath } = data;
-        if (errorMessage) {
-          setTips({ type: 'error', message: errorMessage });
-        } else {
-          setTips(null);
-        }
-      };
-
-      ipcRenderer.on(Channels.UpdateTranslation, updateTranslation);
-
-      return () => {
-        ipcRenderer.removeListener(Channels.UpdateTranslation, updateTranslation);
-      };
-    }
-  }, [start]);
 
   return (
     <div
@@ -117,6 +122,7 @@ export default () => {
           {tips.message}
         </div>
       ) : null}
+      <img src={url} />
     </div>
   );
 };
