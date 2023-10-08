@@ -55,9 +55,12 @@ export default () => {
       const startTime = Date.now();
       const { video, timeout = 0, bounds } = params;
       const { base64 } = captureVideo({ video, bounds });
+      const captureCost = Date.now() - startTime;
+      const ocrStartTime = Date.now();
       const words_result = await ocrInstance.fetchOCR({
         image: base64
       });
+      const ocrCost = Date.now() - ocrStartTime;
       setContent(words_result.map(({ words }: { words: string }) => ({
         text: words,
         fontSize: 16
@@ -70,7 +73,10 @@ export default () => {
       }
       const cost = Date.now() - startTime;
       console.log('looper cost', cost);
-      setTips({ type: 'info', message: `cost ${round(cost / 1000, 2)}s` });
+      setTips({
+        type: 'info',
+        message: `cost ${round(cost / 1000, 2)}s (capture: ${captureCost}ms, OCR: ${ocrCost}ms)`
+      });
     } catch (e) {
       homeLogger.error('looper error', e);
     }

@@ -1,6 +1,7 @@
-import { baidu } from 'src/common/secret';
-
+import { isEqual } from 'lodash-es';
 import log from 'electron-log/renderer';
+
+import { baidu } from 'src/common/secret';
 import { callApi } from 'src/renderer/utils';
 
 export const enum OCRType {
@@ -18,6 +19,9 @@ class OCR {
   access_token: string = '';
   logger = log.scope('ocr');
 
+  private prevImage: string = '';
+  private prevResult: unknown;
+
   get domain() {
     return Domain[this.type];
   }
@@ -31,6 +35,7 @@ class OCR {
     switch (this.type) {
       case OCRType.Baidu: {
         const { API_KEY, SECRET_KEY } = this.secret;
+        // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
         const { data: { access_token } } = await callApi({
           domain: this.domain,
           api: '/oauth/2.0/token',
@@ -54,11 +59,15 @@ class OCR {
     paragraph?: boolean
     probability?: boolean
   }) {
-    const startTime = Date.now();
     if (!this.access_token) {
       await this.getAccessToken();
     }
-    const response = await callApi({
+    // simple diff
+    if (isEqual(this.prevImage, data.image)) {
+      this.logger.info('repeat image, skip');
+      return this.prevResult;
+    }
+    const { data: resData } = await callApi({
       domain: this.domain,
       api: '/rest/2.0/ocr/v1/general_basic',
       method: 'post',
@@ -72,8 +81,8 @@ class OCR {
         ...data
       }
     });
-    console.log(`fetchOCR data, ${Date.now() - startTime}ms`, response.data);
-    return response.data.words_result;
+    this.prevResult = resData.words_result;
+    return resData.words_result;
   }
 
   static getInstance() {
