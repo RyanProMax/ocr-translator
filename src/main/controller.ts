@@ -9,7 +9,7 @@ import { Pages } from '../common/constant';
 
 export class Controller {
   mainWindow: BrowserWindow | null = null;
-  captureScreen: CaptureScreen = new CaptureScreen();
+  captureScreen: CaptureScreen = new CaptureScreen(this);
   logger = logger.scope('controller');
 
   async startApp() {
@@ -47,9 +47,9 @@ export class Controller {
           this.mainWindow = null;
         }
       });
+      this.captureScreen.init();
       registerBridge(this);
       // checkUpdate();
-      this.captureScreen.init();
 
       this.logger.info('app start success');
     } catch (e) {

@@ -1,34 +1,20 @@
-// import log from 'electron-log/renderer';
-// const homeLogger = log.scope('home');
-
 import classnames from 'classnames';
+
 import { IconClose, IconPlayArrow } from '@arco-design/web-react/icon';
 import IconScreenCapture from 'src/renderer/images/ScreenCapture.svg';
 import IconSetting from 'src/renderer/images/Setting.svg';
 
-import { Channels } from 'src/common/constant';
-import { ipcRenderer } from 'src/renderer/utils';
+export enum Icon {
+  ScreenCapture,
+  Start,
+  Setting,
+  Close,
+}
 
-export default ({ show }: {
+export default ({ show, onClickIcon }: {
   show: boolean
+  onClickIcon: (type: Icon) => Promise<unknown>
 }) => {
-  const onCrop = () => {
-    return ipcRenderer.send(Channels.CropScreenShow);
-  };
-
-  const onClose = () => {
-    return ipcRenderer.send(Channels.Quit);
-  };
-
-  const onStart = async () => {
-    const result = await ipcRenderer.invoke(Channels.StartTranslation);
-    console.log('result', result);
-  };
-
-  const onSetting = () => {
-
-  };
-
   return (
     <div
       className={classnames('home-control-bar', {
@@ -39,18 +25,18 @@ export default ({ show }: {
       </div>
       <div className='home-control-bar__center'>
         <div title='capture screen' className='home-control-bar__icon-wrapper'>
-          <IconScreenCapture className='arco-icon' onClick={onCrop} />
+          <IconScreenCapture className='arco-icon' onClick={() => onClickIcon(Icon.ScreenCapture)} />
         </div>
         <div title='start' className='home-control-bar__icon-wrapper'>
-          <IconPlayArrow onClick={onStart} />
+          <IconPlayArrow onClick={() => onClickIcon(Icon.Start)} />
         </div>
         <div title='setting' className='home-control-bar__icon-wrapper'>
-          <IconSetting className='arco-icon' onClick={onSetting} />
+          <IconSetting className='arco-icon' onClick={() => onClickIcon(Icon.Setting)} />
         </div>
       </div>
       <div className='home-control-bar__right'>
         <div title='close' className='home-control-bar__icon-wrapper'>
-          <IconClose onClick={onClose} />
+          <IconClose onClick={() => onClickIcon(Icon.Close)} />
         </div>
       </div>
     </div>

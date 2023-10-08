@@ -13,6 +13,8 @@ export enum Channels {
   Drag = 'Drag',
   Resize = 'Resize',
   StartTranslation = 'StartTranslation',
+  StopTranslation = 'StopTranslation',
 
   UpdateCropArea = 'UpdateCropArea',
+  UpdateTranslation = 'UpdateTranslation',
 }

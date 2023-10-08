@@ -19,36 +19,6 @@ export function registerBridge(controller: Controller) {
     app.quit();
   });
 
-  // show crop screen
-  ipcMain.on(Channels.CropScreenShow, () => {
-    logger.info('crop area');
-    const { cropWindow } = captureScreen;
-    if (cropWindow) {
-      // reset crop area
-      cropWindow.webContents.send(Channels.UpdateCropArea);
-      // trigger after ipc event
-      cropWindow.show();
-    }
-  });
-  // hide crop screen
-  ipcMain.on(Channels.CropScreenHide, () => {
-    logger.info('crop screen hide');
-    captureScreen.cropWindow?.hide();
-  });
-  ipcMain.on(Channels.CropScreenConfirm, (_, data) => {
-    logger.info('crop screen confirm', data);
-    const { captureWindow } = captureScreen;
-    if (captureWindow) {
-      captureWindow.setBounds({
-        width: Math.max(Math.ceil(data.width), 100),
-        height: Math.max(Math.ceil(data.height), 100),
-        x: Math.floor(data.x),
-        y: Math.floor(data.y)
-      }, false);
-      captureWindow.show();
-    }
-  });
-
   // broserWindow drag
   onDrag();
 
@@ -62,4 +32,6 @@ export function registerBridge(controller: Controller) {
       });
     });
   }
+
+  captureScreen.register();
 }
