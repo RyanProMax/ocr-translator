@@ -1,33 +1,20 @@
 import {
-  app, BrowserWindow, ipcMain, screen, desktopCapturer,
+  BrowserWindow, ipcMain, screen, desktopCapturer, Rectangle, Display,
 } from 'electron';
-import path from 'path';
-import fse from 'fs-extra';
 
 import { Controller } from './controller';
 import { logger } from './logger';
 import { createWindow } from '../common/utils';
 import { Channels, Pages } from '../common/constant';
-import { clearInterval } from 'timers';
 
 export default class CaptureScreen {
   controller: Controller;
   cropWindow: BrowserWindow | null = null;
   captureWindow: BrowserWindow | null = null;
   captured = false;
-  cacheCapturePath = path.join(
-    app.getPath('userData'),
-    '/cache_capture',
-  );
-  captureImageName = 'capture_image.png';
-  captureImageFullPath = path.join(
-    this.cacheCapturePath,
-    this.captureImageName
-  );
-
-  private loopTimer?: NodeJS.Timeout;
-
   logger = logger.scope('capture-screen');
+
+  private looperTimer: NodeJS.Timeout | null = null;
 
   constructor(controller: Controller) {
     this.controller = controller;
@@ -97,68 +84,81 @@ export default class CaptureScreen {
     });
 
     // Capture Image -> OCR -> Translation
-    ipcMain.on(Channels.StartTranslation, (_, interval: number = 1000) => {
+    ipcMain.on(Channels.StartTranslation, async (_, interval: number = 200) => {
       this.logger.info(Channels.StartTranslation);
-      this.clearLoopTimer();
-      // start looper
-      this.loopTimer = setInterval(async () => {
-        const {
-          captured, captureWindow,
-          controller: { mainWindow }
-        } = this;
-        try {
-          if (captured && captureWindow) {
-            const filePath = await this.writeCaptureImage();
-            if (!filePath) {
-              throw new Error('Write image error');
-            }
-            mainWindow?.webContents.send(Channels.UpdateTranslation, {
-              imagePath: filePath
-            });
-            this.logger.info('looper success', filePath);
-          } else {
-            throw new Error('Please capture screen first.');
-          }
-        } catch (e) {
-          this.logger.info('looper error', e);
-          mainWindow?.webContents.send(Channels.UpdateTranslation, {
-            errorMessage: (e as any).message
+      console.log('trigger Channels.StartTranslation');
+
+      const {
+        captured, captureWindow,
+        controller: { mainWindow }
+      } = this;
+      try {
+        if (captured && captureWindow) {
+          const bounds = captureWindow.getBounds();
+          const currentScreen = screen.getDisplayMatching(bounds);
+          this.looper({
+            bounds,
+            currentScreen,
+            browserWindow: mainWindow!,
+            interval
           });
+        } else {
+          throw new Error('Please capture screen first.');
         }
-      }, interval);
+      } catch (e) {
+        this.logger.error('looper error', e);
+        mainWindow?.webContents.send(Channels.UpdateTranslation, {
+          errorMessage: (e as any).message
+        });
+      }
     });
 
-    ipcMain.on(Channels.StopTranslation, this.clearLoopTimer);
+    ipcMain.on(Channels.StopTranslation, this.clearTimer);
   }
 
-  async writeCaptureImage() {
-    const { captureWindow } = this;
-    if (captureWindow) {
-      const bounds = captureWindow.getBounds();
-      const targetScreen = screen.getDisplayMatching(bounds);
-
+  async looper(params: {
+    bounds: Rectangle
+    currentScreen: Display
+    browserWindow: BrowserWindow
+    interval: number
+  }) {
+    const { bounds, currentScreen, browserWindow, interval } = params;
+    try {
+      const startTime = Date.now();
+      this.clearTimer();
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
-        thumbnailSize: targetScreen.size,
+        thumbnailSize: currentScreen.size,
       });
       const targetSource = sources.length > 1
-        ? sources.find(s => s.display_id === String(targetScreen.id))
+        ? sources.find(s => s.display_id === String(currentScreen.id))
         : sources[0];
       if (!targetSource) {
-        throw new Error('fail to find screen');
+        throw new Error('fail to get screen');
       }
-      const buffer = targetSource.thumbnail.crop(bounds).toPNG();
-      await fse.ensureDir(this.cacheCapturePath);
-      await fse.writeFile(this.captureImageFullPath, buffer);
-      return this.captureImageFullPath;
+      const dataUrl = targetSource.thumbnail.crop(bounds).toDataURL();
+      if (!dataUrl) {
+        throw new Error('fail to get screenshot');
+      }
+      browserWindow.webContents.send(Channels.UpdateTranslation, {
+        imagePath: dataUrl
+      });
+      this.looperTimer = setTimeout(() => {
+        this.looper(params);
+      }, interval);
+      this.logger.info('looper success', `${Date.now() - startTime}ms`);
+    } catch (e) {
+      this.logger.error('looper error', e);
+      browserWindow.webContents.send(Channels.UpdateTranslation, {
+        errorMessage: (e as any).message
+      });
     }
-    return null;
   }
 
-  private clearLoopTimer() {
-    this.logger.info('clearLoopTimer', this.loopTimer);
-    if (this.loopTimer) {
-      clearInterval(this.loopTimer);
+  private clearTimer() {
+    if (this.looperTimer) {
+      clearTimeout(this.looperTimer);
+      this.looperTimer = null;
     }
   }
 }
