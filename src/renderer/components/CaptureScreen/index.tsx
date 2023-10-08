@@ -1,12 +1,14 @@
-// import { Channels } from 'src/common/constant';
-
+import useDrag from 'src/renderer/hooks/useDrag';
 import './index.less';
 
 export default () => {
-
   return (
-    <div className='capture-screen'>
-
+    <div
+      onMouseDown={() => useDrag(true)}
+      onMouseUp={() => useDrag(false)}
+      onContextMenu={() => useDrag(false)}
+      className='capture-screen'
+    >
     </div >
   );
 };

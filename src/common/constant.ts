@@ -5,11 +5,12 @@ export enum Pages {
 }
 
 export enum Channels {
+  Quit = 'Quit',
   CreateWindow = 'CreateWindow',
   CropScreenShow = 'CropScreenShow',
   CropScreenHide = 'CropScreenHide',
   CropScreenConfirm = 'CropScreenConfirm',
-  Quit = 'Quit',
+  Drag = 'Drag',
 
   UpdateCropArea = 'UpdateCropArea',
 }

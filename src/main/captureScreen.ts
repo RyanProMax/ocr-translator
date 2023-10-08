@@ -25,6 +25,8 @@ export default class CaptureScreen {
       this.captureWindow = createWindow({
         htmlFileName: Pages.Capture,
         browserWindowOptions: {
+          minWidth: 100,
+          minHeight: 100,
           resizable: true,
         },
         onReadyToShow: () => { },

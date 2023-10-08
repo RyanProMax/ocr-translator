@@ -3,6 +3,7 @@ import { app, ipcMain } from 'electron';
 import { createWindow } from '../common/utils';
 import { Channels } from '../common/constant';
 import { Controller } from './controller';
+import { onDrag } from './drag';
 
 export function registerBridge(controller: Controller) {
   // app handler
@@ -45,4 +46,6 @@ export function registerBridge(controller: Controller) {
       captureWindow.show();
     }
   });
+  // broserWindow drag
+  onDrag();
 }
