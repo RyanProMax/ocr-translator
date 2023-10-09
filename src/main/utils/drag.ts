@@ -1,5 +1,5 @@
 import { screen, ipcMain, BrowserWindow, IpcMainEvent } from 'electron';
-import { Channels } from '../common/constant';
+import { Channels } from '../../common/constant';
 
 // drag without use -webkit-app-region: drag;
 export function onDrag(interval = 20) {

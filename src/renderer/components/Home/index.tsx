@@ -135,7 +135,7 @@ export default () => {
         return ipcRenderer.send(Channels.Quit);
       }
       case Icon.Setting: {
-        return;
+        return ipcRenderer.send(Channels.OpenSetting);
       }
       default: return;
     }

@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import keyBy from 'lodash/keyBy';
 
 import { Pages } from '../common/constant';
-import { removeFileExtname } from '../common/utils';
+import { removeFileExtname } from '../main/utils';
 
 const htmlTemplate = path.join(__dirname, 'template.html');
 const entryDir = path.join(__dirname, 'entry');

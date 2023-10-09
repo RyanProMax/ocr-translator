@@ -1,16 +1,16 @@
 import { app, ipcMain } from 'electron';
-import Store from 'electron-store';
+import ElectronStore from 'electron-store';
 import path from 'path';
 
-import { Channels } from '../../common/constant';
+import { Channels } from '../common/constant';
 
-export default class OTStore {
+export default class Store {
   rootPath = path.join(app.getPath('userData'), 'OTStorage');
   defaultOptions = {
     cwd: this.rootPath,
   };
 
-  userStore = new Store({
+  userStore = new ElectronStore({
     ...this.defaultOptions,
     name: 'userStore',
   });

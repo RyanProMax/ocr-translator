@@ -2,64 +2,34 @@ import {
   BrowserWindow, ipcMain, screen, desktopCapturer,
 } from 'electron';
 
-import { Controller } from './controller';
-import { logger } from './logger';
-import { createWindow } from '../common/utils';
+import { logger } from './utils/logger';
+import { getHtmlPath, getPreloadPath } from './utils';
 import { Channels, Pages } from '../common/constant';
 
 export default class CaptureScreen {
-  controller: Controller;
-  captured = false;
   logger = logger.scope('capture-screen');
-
-  cropWindow: BrowserWindow = createWindow({
-    htmlFileName: Pages.CropScreen,
-    browserWindowOptions: {
-      resizable: false,
-      fullscreen: true,
-      alwaysOnTop: true,
-    },
-    onReadyToShow: () => {},
-  });
-
-  captureWindow: BrowserWindow = createWindow({
-    htmlFileName: Pages.Capture,
-    browserWindowOptions: {
-      minWidth: 100,
-      minHeight: 100,
-      x: 0,
-      y: 0,
-      width: 100,
-      height: 100,
-      resizable: true,
-      alwaysOnTop: true,
-    },
-    onReadyToShow: () => {},
-  });
-
-  constructor(controller: Controller) {
-    this.controller = controller;
-  }
+  captured = false;
+  cropWindow = this.createCropWindow();
+  captureWindow = this.createCaptureWindow();
 
   register() {
     ipcMain.on(Channels.CropScreenShow, () => {
-      logger.info('crop area');
+      this.logger.info(Channels.CropScreenShow);
       const { cropWindow } = this;
       if (cropWindow) {
         // reset crop area
         cropWindow.webContents.send(Channels.UpdateCropArea);
-        // trigger after ipc event
         cropWindow.show();
       }
     });
 
     ipcMain.on(Channels.CropScreenHide, () => {
-      logger.info('crop screen hide');
+      this.logger.info(Channels.CropScreenHide);
       this.cropWindow?.hide();
     });
 
     ipcMain.on(Channels.CropScreenConfirm, (_, data) => {
-      logger.info('crop screen confirm', data);
+      this.logger.info(Channels.CropScreenConfirm, data);
       this.captureWindow.setBounds({
         width: Math.max(Math.ceil(data.width), 100),
         height: Math.max(Math.ceil(data.height), 100),
@@ -104,5 +74,48 @@ export default class CaptureScreen {
         };
       }
     });
+  }
+
+  private createCropWindow() {
+    const cropWindow = new BrowserWindow({
+      show: false,
+      transparent: true,
+      autoHideMenuBar: true,
+      frame: false,
+      resizable: false,
+      fullscreen: true,
+      alwaysOnTop: true,
+      webPreferences: {
+        preload: getPreloadPath(),
+        webSecurity: false,
+      },
+    });
+
+    cropWindow.loadURL(getHtmlPath(Pages.CropScreen));
+    return cropWindow;
+  }
+
+  private createCaptureWindow() {
+    const captureWindow = new BrowserWindow({
+      show: false,
+      minWidth: 100,
+      minHeight: 100,
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      transparent: true,
+      autoHideMenuBar: true,
+      frame: false,
+      resizable: true,
+      alwaysOnTop: true,
+      webPreferences: {
+        preload: getPreloadPath(),
+        webSecurity: false,
+      },
+    });
+
+    captureWindow.loadURL(getHtmlPath(Pages.Capture));
+    return captureWindow;
   }
 }

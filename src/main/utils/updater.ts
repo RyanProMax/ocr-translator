@@ -3,7 +3,7 @@ import { autoUpdater } from 'electron-updater';
 import path from 'path';
 
 import { isDev } from 'src/common/env';
-import { logger } from 'src/main/logger';
+import { logger } from 'src/main/utils/logger';
 
 const updaterLogger = logger.scope('updater');
 

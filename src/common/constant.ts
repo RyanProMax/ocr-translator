@@ -6,19 +6,25 @@ export enum Pages {
 
 export enum Channels {
   Quit = 'Quit',
-  CreateWindow = 'CreateWindow',
+
+  // main event
+  Drag = 'Drag',
+  Resize = 'Resize',
+
+  // capture screen event
   CropScreenShow = 'CropScreenShow',
   CropScreenHide = 'CropScreenHide',
   CropScreenConfirm = 'CropScreenConfirm',
-  Drag = 'Drag',
-  Resize = 'Resize',
-  StartTranslation = 'StartTranslation',
-  StopTranslation = 'StopTranslation',
+  UpdateCropArea = 'UpdateCropArea',
+
+  // OCR
   GetScreenSource = 'GetScreenSource',
 
+  // store
   GetUserStore = 'GetUserStore',
   SetUserStore = 'SetUserStore',
 
-  UpdateCropArea = 'UpdateCropArea',
-  UpdateTranslation = 'UpdateTranslation',
+  // setting
+  OpenSetting = 'OpenSetting',
+  CloseSetting = 'CloseSetting',
 }

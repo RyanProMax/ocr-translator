@@ -1,0 +1,50 @@
+import { app, BrowserWindow } from 'electron';
+import { getHtmlPath, getPreloadPath } from './utils';
+import { Channels, Pages } from '../common/constant';
+
+export default class MainWindow {
+  browserWindow = this.createMainWindow();
+
+  constructor() {
+    app.on('activate', () => {
+      if (!this.browserWindow) {
+        this.browserWindow = this.createMainWindow();
+      }
+    });
+  }
+
+  private createMainWindow() {
+    const browserWindow = new BrowserWindow({
+      show: false,
+      minWidth: 360,
+      minHeight: 160,
+      width: 720,
+      height: 160,
+      transparent: true,
+      autoHideMenuBar: true,
+      frame: false,
+      webPreferences: {
+        preload: getPreloadPath(),
+        webSecurity: false,
+      },
+    });
+
+    browserWindow.loadURL(getHtmlPath(Pages.Home));
+
+    browserWindow.on('ready-to-show', () => {
+      browserWindow.show();
+    });
+
+    return browserWindow;
+  }
+
+  register() {
+    this.browserWindow.on('will-resize', () => {
+      this.browserWindow.webContents.send(Channels.Resize, true);
+
+      this.browserWindow.once('resized', () => {
+        this.browserWindow.webContents.send(Channels.Resize, false);
+      });
+    });
+  }
+}

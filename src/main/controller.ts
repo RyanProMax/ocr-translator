@@ -1,65 +1,65 @@
-import { app, BrowserWindow } from 'electron';
+import { app, ipcMain } from 'electron';
 
-import OTStore from './store';
-import CaptureScreen from './captureScreen';
-import { createWindow } from '../common/utils';
-import { registerBridge } from './register';
+import MainWindow from './MainWindow';
+import Store from './Store';
+import CaptureScreen from './CaptureScreen';
+
 // import { checkUpdate } from './updater';
-import { logger } from './logger';
-import { Pages } from '../common/constant';
+import { logger } from './utils/logger';
+import { Channels } from '../common/constant';
+import { onDrag } from './utils/drag';
 
-export class Controller {
-  mainWindow: BrowserWindow | null = null;
-  captureScreen: CaptureScreen | null = null;
-  store: OTStore | null = null;
+export default class Controller {
   logger = logger.scope('controller');
+
+  mainWindow: MainWindow | null = null;
+  captureScreen: CaptureScreen | null = null;
+  store: Store | null = null;
 
   async startApp() {
     try {
       this.logger.info('app start');
 
-      app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') {
-          app.quit();
-        }
-      });
-
-      app.on('activate', () => {
-        if (this.mainWindow === null) {
-          this.mainWindow = createWindow({
-            htmlFileName: Pages.Home,
-            onClose: () => {
-              this.mainWindow = null;
-            }
-          });
-        }
-      });
-
+      this.registerAppEvent();
       await app.whenReady();
 
-      this.mainWindow = createWindow({
-        htmlFileName: Pages.Home,
-        browserWindowOptions: {
-          minWidth: 360,
-          minHeight: 160,
-          width: 720,
-          height: 160,
-        },
-        onClose: () => {
-          this.mainWindow = null;
-        }
-      });
+      this.mainWindow = new MainWindow();
+      this.captureScreen = new CaptureScreen();
+      this.store = new Store();
 
-      this.captureScreen = new CaptureScreen(this);
-      this.store = new OTStore();
-      registerBridge(this);
-      this.captureScreen.register();
-      this.store.register();
+      // ensure run after initial MainWindow/CaptureScreen/Store
+      this.registerMainEvent();
+
       // checkUpdate();
 
       this.logger.info('app start success');
     } catch (e) {
       this.logger.error('app start error', e);
     }
+  }
+
+  private registerAppEvent() {
+    app.on('window-all-closed', () => {
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+  }
+
+  private registerMainEvent() {
+    ipcMain.on(Channels.Quit, () => {
+      this.logger.info('app quit');
+      app.quit();
+    });
+
+    // drag event
+    onDrag();
+
+    // window event
+    this.mainWindow?.register();
+    this.captureScreen?.register();
+
+    // store event
+    this.store?.register();
   }
 }
