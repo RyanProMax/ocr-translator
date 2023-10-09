@@ -1,0 +1,17 @@
+@import '../../styles/common.less';
+
+.tips {
+  padding: 6px 12px;
+  background-color: @bg-error;
+  // background-color: @bg-32-72;
+  transition: all .25s;
+
+  &--hidden {
+    padding: 0;
+    height: 0;
+  }
+
+  &--error {
+    background-color: @bg-error;
+  }
+}

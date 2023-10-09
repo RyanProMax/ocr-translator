@@ -6,10 +6,12 @@ import log from 'electron-log/renderer';
 
 import { captureVideo, ipcRenderer, loadStream } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
-import ControlBar, { Icon } from './ControlBar';
 import { Channels } from 'src/common/constant';
 import { ocrInstance } from 'src/renderer/utils/OCR';
 import { translation } from 'src/renderer/utils/Translation';
+
+import ControlBar, { Icon } from './ControlBar';
+import Tips, { ITips } from './Tips';
 
 import './index.less';
 
@@ -22,14 +24,11 @@ const DEFAULT_TEXT = [
   { text: '3. click [start]', fontSize: 16 },
 ];
 
-export type Tips = {
-  type: 'info' | 'error'
-  message: string
-}
+const DEFAULT_TIPS: ITips = { type: 'info', message: '' };
 
 export default () => {
   const [content, setContent] = useState(DEFAULT_TEXT);
-  const [tips, setTips] = useState<Tips | null>(null);
+  const [tips, setTips] = useState<ITips>(DEFAULT_TIPS);
   const [cursorEnter, setCursorEnter] = useState(false);
   const [isResize, setIsResize] = useState(false);
   const [start, setStart] = useState(false);
@@ -96,7 +95,7 @@ export default () => {
       homeLogger.error('looper error', e);
       setTips({
         type: 'error',
-        message: (e as any).message,
+        message: `Error: ${(e as any).message}`,
       });
     }
   };
@@ -114,9 +113,9 @@ export default () => {
           homeLogger.info('invoke GetScreenSource', result);
           const { errorMessage, data } = result;
           if (errorMessage) {
-            setTips({ type: 'error', message: errorMessage });
+            setTips({ type: 'error', message: `Error: ${errorMessage}` });
           } else {
-            setTips(null);
+            setTips(DEFAULT_TIPS);
             const { id, bounds } = data;
             const video = await loadStream(id);
             looper({ video, timeout: 200, bounds });
@@ -128,7 +127,7 @@ export default () => {
           clearTimer();
           setStart(false);
           setContent(DEFAULT_TEXT);
-          setTips(null);
+          setTips(DEFAULT_TIPS);
         }
         return;
       }
@@ -177,11 +176,7 @@ export default () => {
           </span>
         ))}
       </div>
-      {tips?.message ? (
-        <div className='home-footer'>
-          {tips.message}
-        </div>
-      ) : null}
+      <Tips type={tips.type} message={tips.message} />
     </div>
   );
 };
