@@ -6,7 +6,7 @@ import { Controller } from './controller';
 import { onDrag } from './drag';
 
 export function registerBridge(controller: Controller) {
-  const { mainWindow, logger, captureScreen } = controller;
+  const { mainWindow, logger } = controller;
 
   // app handler
   ipcMain.handle(
@@ -32,6 +32,4 @@ export function registerBridge(controller: Controller) {
       });
     });
   }
-
-  captureScreen.register();
 }

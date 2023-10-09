@@ -1,16 +1,24 @@
-import { isEqual } from 'lodash-es';
+import { isEqual, pick } from 'lodash-es';
 import log from 'electron-log/renderer';
 
-import { OCR as OCR_SECRET } from 'src/renderer/utils/secret';
-import { callApi } from 'src/renderer/utils';
+import { callApi, ipcRenderer } from 'src/renderer/utils';
+import { Channels } from 'src/common/constant';
 
-export const enum OCRType {
-  Baidu
+enum OCRType {
+  Baidu = 'BaiduOCTSecret',
 }
 
-export type BaiduOCRItem = {
+interface BaiduOCTSecret {
+  client_id?: string
+  client_secret?: string
+  access_token?: string
+}
+
+type BaiduOCRResult = {
   words: string
 }
+
+type OCRResult = BaiduOCRResult[];
 
 const Domain = {
   [OCRType.Baidu]: 'https://aip.baidubce.com',
@@ -20,25 +28,26 @@ class OCR {
   static instance: OCR | null = null;
 
   type = OCRType.Baidu;
-  access_token: string = '';
   logger = log.scope('ocr');
 
   private prevImage: string = '';
-  private prevResult: unknown;
+  private prevResult: OCRResult = [];
 
   get domain() {
     return Domain[this.type];
   }
 
-  // diy yourself here
-  get secret() {
-    return OCR_SECRET[this.type];
+  getSecret() {
+    return ipcRenderer.invoke(Channels.GetUserStore, this.type);
   }
 
   async getAccessToken() {
     switch (this.type) {
       case OCRType.Baidu: {
-        const { API_KEY, SECRET_KEY } = this.secret;
+        const secret: BaiduOCTSecret | null = await this.getSecret();
+        if (!secret?.client_id || !secret.client_secret) {
+          throw new Error('Please set secret first.');
+        }
         // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
         const { data: { access_token } } = await callApi({
           domain: this.domain,
@@ -46,14 +55,16 @@ class OCR {
           method: 'post',
           params: {
             grant_type: 'client_credentials',
-            client_id: API_KEY,
-            client_secret: SECRET_KEY
+            ...pick(secret, ['client_id', 'client_secret']),
           }
         });
-        this.access_token = access_token;
-        return;
+        await ipcRenderer.invoke(Channels.SetUserStore, OCRType.Baidu, {
+          ...secret,
+          access_token,
+        });
+        return access_token as string;
       }
-      default: return;
+      default: return '';
     }
   }
 
@@ -62,31 +73,38 @@ class OCR {
     detect_direction?: boolean
     paragraph?: boolean
     probability?: boolean
-  }) {
-    if (!this.access_token) {
-      await this.getAccessToken();
-    }
-    // simple diff
-    if (isEqual(this.prevImage, data.image)) {
-      this.logger.info('repeat image, skip');
-      return this.prevResult;
-    }
-    const { data: resData } = await callApi({
-      domain: this.domain,
-      api: '/rest/2.0/ocr/v1/general_basic',
-      method: 'post',
-      params: {
-        access_token: this.access_token,
-      },
-      data: {
-        detect_direction: false,
-        paragraph: false,
-        probability: false,
-        ...data
+  }): Promise<BaiduOCRResult[]> {
+    switch (this.type) {
+      case OCRType.Baidu: {
+        let access_token: string = '';
+        const secret: BaiduOCTSecret | null = await this.getSecret();
+        if (!secret?.access_token) {
+          access_token = await this.getAccessToken();
+        }
+        // simple diff
+        if (isEqual(this.prevImage, data.image)) {
+          this.logger.info('repeat image, skip');
+          return this.prevResult;
+        }
+        const { data: resData } = await callApi({
+          domain: this.domain,
+          api: '/rest/2.0/ocr/v1/general_basic',
+          method: 'post',
+          params: {
+            access_token,
+          },
+          data: {
+            detect_direction: false,
+            paragraph: false,
+            probability: false,
+            ...data
+          }
+        });
+        this.prevResult = resData.words_result as BaiduOCRResult[];
+        return this.prevResult;
       }
-    });
-    this.prevResult = resData.words_result;
-    return resData.words_result;
+      default: return [];
+    }
   }
 
   static getInstance() {

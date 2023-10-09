@@ -1,15 +1,17 @@
 import { app, BrowserWindow } from 'electron';
 
+import OTStore from './store';
+import CaptureScreen from './captureScreen';
 import { createWindow } from '../common/utils';
 import { registerBridge } from './register';
-import CaptureScreen from './captureScreen';
 // import { checkUpdate } from './updater';
 import { logger } from './logger';
 import { Pages } from '../common/constant';
 
 export class Controller {
   mainWindow: BrowserWindow | null = null;
-  captureScreen: CaptureScreen = new CaptureScreen(this);
+  captureScreen: CaptureScreen | null = null;
+  store: OTStore | null = null;
   logger = logger.scope('controller');
 
   async startApp() {
@@ -47,8 +49,12 @@ export class Controller {
           this.mainWindow = null;
         }
       });
-      this.captureScreen.init();
+
+      this.captureScreen = new CaptureScreen(this);
+      this.store = new OTStore();
       registerBridge(this);
+      this.captureScreen.register();
+      this.store.register();
       // checkUpdate();
 
       this.logger.info('app start success');

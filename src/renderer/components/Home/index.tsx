@@ -6,12 +6,12 @@ import log from 'electron-log/renderer';
 
 import { captureVideo, ipcRenderer, loadStream } from 'src/renderer/utils';
 import useDrag from 'src/renderer/hooks/useDrag';
-import { BaiduOCRItem, ocrInstance } from 'src/renderer/utils/OCR';
 import ControlBar, { Icon } from './ControlBar';
 import { Channels } from 'src/common/constant';
+import { ocrInstance } from 'src/renderer/utils/OCR';
+import { translation } from 'src/renderer/utils/Translation';
 
 import './index.less';
-import { BaiduTransResult, translation } from 'src/renderer/utils/Translation';
 
 const homeLogger = log.scope('home');
 
@@ -23,7 +23,7 @@ const DEFAULT_TEXT = [
 ];
 
 export type Tips = {
-  type: string
+  type: 'info' | 'error'
   message: string
 }
 
@@ -68,13 +68,13 @@ export default () => {
       const ocrCost = Date.now() - ocrStartTime;
 
       // Translation
-      if (words_result?.length > 0) {
+      if (words_result.length > 0) {
         const translationStartTime = Date.now();
-        const { trans_result } = await translation.fetchTranslation({
-          q: words_result.map((o: BaiduOCRItem) => o.words).join(' '),
+        const trans_result = await translation.fetchTranslation({
+          q: words_result.map(o => o.words).join(' '),
         });
         const translationCost = Date.now() - translationStartTime;
-        setContent(trans_result.map(({ dst }: BaiduTransResult) => ({
+        setContent(trans_result.map(({ dst }) => ({
           text: dst,
           fontSize: 16
         })));
@@ -94,6 +94,10 @@ export default () => {
       }
     } catch (e) {
       homeLogger.error('looper error', e);
+      setTips({
+        type: 'error',
+        message: (e as any).message,
+      });
     }
   };
 

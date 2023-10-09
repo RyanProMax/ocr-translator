@@ -1,19 +1,26 @@
+import { pick } from 'lodash-es';
 import log from 'electron-log/renderer';
 
-import { Translation as TranslationSecret } from 'src/renderer/utils/secret';
-import { callApi } from 'src/renderer/utils';
+import { callApi, ipcRenderer } from 'src/renderer/utils';
+import { Channels } from 'src/common/constant';
 
-export const enum TranslationType {
-  Baidu
+enum TranslationType {
+  Baidu = 'BaiduTranslationSecret',
 }
 
-export const enum Language {
+interface BaiduTranslationSecret {
+  client_id?: string
+  client_secret?: string
+  access_token?: string
+}
+
+enum Language {
   Auto = 'auto',
   English = 'en',
   Chinese = 'zh',
 }
 
-export type BaiduTransResult = {
+type BaiduTransResult = {
   src: string
   dst: string
 }
@@ -26,22 +33,23 @@ class Translation {
   static instance: Translation | null = null;
 
   type = TranslationType.Baidu;
-  access_token: string = '';
   logger = log.scope('translation');
 
   get domain() {
     return Domain[this.type];
   }
 
-  // diy yourself here
-  get secret() {
-    return TranslationSecret[this.type];
+  getSecret() {
+    return ipcRenderer.invoke(Channels.GetUserStore, this.type);
   }
 
   async getAccessToken() {
     switch (this.type) {
       case TranslationType.Baidu: {
-        const { API_KEY, SECRET_KEY } = this.secret;
+        const secret: BaiduTranslationSecret | null = await this.getSecret();
+        if (!secret?.client_id || !secret.client_secret) {
+          throw new Error('Please set secret first.');
+        }
         // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
         const { data: { access_token } } = await callApi({
           domain: this.domain,
@@ -49,14 +57,16 @@ class Translation {
           method: 'post',
           params: {
             grant_type: 'client_credentials',
-            client_id: API_KEY,
-            client_secret: SECRET_KEY
+            ...pick(secret, ['client_id', 'client_secret']),
           }
         });
-        this.access_token = access_token;
-        return;
+        await ipcRenderer.invoke(Channels.SetUserStore, TranslationType.Baidu, {
+          ...secret,
+          access_token,
+        });
+        return access_token as string;
       }
-      default: return;
+      default: return '';
     }
   }
 
@@ -65,26 +75,33 @@ class Translation {
     from?: string
     to?: string
   }) {
-    if (!this.access_token) {
-      await this.getAccessToken();
-    }
-    const { data: resData } = await callApi({
-      domain: this.domain,
-      headers: {
-        ['Content-Type']: 'application/json'
-      },
-      api: '/rpc/2.0/mt/texttrans/v1',
-      method: 'post',
-      params: {
-        access_token: this.access_token,
-      },
-      data: {
-        from: Language.Auto,
-        to: Language.Chinese,
-        ...data
+    switch (this.type) {
+      case TranslationType.Baidu: {
+        let access_token: string = '';
+        const secret: BaiduTranslationSecret | null = await this.getSecret();
+        if (!secret?.access_token) {
+          access_token = await this.getAccessToken();
+        }
+        const { data: resData } = await callApi({
+          domain: this.domain,
+          headers: {
+            ['Content-Type']: 'application/json'
+          },
+          api: '/rpc/2.0/mt/texttrans/v1',
+          method: 'post',
+          params: {
+            access_token,
+          },
+          data: {
+            from: Language.Auto,
+            to: Language.Chinese,
+            ...data
+          }
+        });
+        return resData.result.trans_result as BaiduTransResult[];
       }
-    });
-    return resData.result;
+      default: return [];
+    }
   }
 
   static getInstance() {

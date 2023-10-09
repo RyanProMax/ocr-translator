@@ -16,6 +16,9 @@ export enum Channels {
   StopTranslation = 'StopTranslation',
   GetScreenSource = 'GetScreenSource',
 
+  GetUserStore = 'GetUserStore',
+  SetUserStore = 'SetUserStore',
+
   UpdateCropArea = 'UpdateCropArea',
   UpdateTranslation = 'UpdateTranslation',
 }
