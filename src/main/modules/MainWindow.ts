@@ -1,8 +1,11 @@
 import { app, BrowserWindow } from 'electron';
-import { getHtmlPath, getPreloadPath } from './utils';
-import { Channels, Pages } from '../common/constant';
+
+// import { logger } from '../utils/logger';
+import { getHtmlPath, getPreloadPath } from '../utils/index';
+import { Channels, Pages } from '../../common/constant';
 
 export default class MainWindow {
+  // logger = logger.scope('main window');
   browserWindow = this.createMainWindow();
 
   constructor() {

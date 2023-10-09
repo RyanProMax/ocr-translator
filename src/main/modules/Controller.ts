@@ -3,17 +3,19 @@ import { app, ipcMain } from 'electron';
 import MainWindow from './MainWindow';
 import Store from './Store';
 import CaptureScreen from './CaptureScreen';
+import Settings from './Settings';
 
 // import { checkUpdate } from './updater';
-import { logger } from './utils/logger';
-import { Channels } from '../common/constant';
-import { onDrag } from './utils/drag';
+import { logger } from '../utils/logger';
+import { Channels } from '../../common/constant';
+import { onDrag } from '../utils/drag';
 
 export default class Controller {
   logger = logger.scope('controller');
 
   mainWindow: MainWindow | null = null;
   captureScreen: CaptureScreen | null = null;
+  settings: Settings | null = null;
   store: Store | null = null;
 
   async startApp() {
@@ -25,6 +27,7 @@ export default class Controller {
 
       this.mainWindow = new MainWindow();
       this.captureScreen = new CaptureScreen();
+      this.settings = new Settings(this);
       this.store = new Store();
 
       // ensure run after initial MainWindow/CaptureScreen/Store
@@ -58,6 +61,7 @@ export default class Controller {
     // window event
     this.mainWindow?.register();
     this.captureScreen?.register();
+    this.settings?.register();
 
     // store event
     this.store?.register();

@@ -2,7 +2,7 @@ import { app, ipcMain } from 'electron';
 import ElectronStore from 'electron-store';
 import path from 'path';
 
-import { Channels } from '../common/constant';
+import { Channels } from '../../common/constant';
 
 export default class Store {
   rootPath = path.join(app.getPath('userData'), 'OTStorage');

@@ -2,9 +2,9 @@ import {
   BrowserWindow, ipcMain, screen, desktopCapturer,
 } from 'electron';
 
-import { logger } from './utils/logger';
-import { getHtmlPath, getPreloadPath } from './utils';
-import { Channels, Pages } from '../common/constant';
+import { logger } from '../utils/logger';
+import { getHtmlPath, getPreloadPath } from '../utils';
+import { Channels, Pages } from '../../common/constant';
 
 export default class CaptureScreen {
   logger = logger.scope('capture-screen');

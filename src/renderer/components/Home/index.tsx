@@ -134,8 +134,8 @@ export default () => {
       case Icon.Close: {
         return ipcRenderer.send(Channels.Quit);
       }
-      case Icon.Setting: {
-        return ipcRenderer.send(Channels.OpenSetting);
+      case Icon.Settings: {
+        return ipcRenderer.send(Channels.OpenSettings);
       }
       default: return;
     }

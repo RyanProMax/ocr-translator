@@ -2,6 +2,7 @@ export enum Pages {
   Home = 'home.html',
   CropScreen = 'cropScreen.html',
   Capture = 'captureScreen.html',
+  Settings = 'settings.html',
 }
 
 export enum Channels {
@@ -25,6 +26,6 @@ export enum Channels {
   SetUserStore = 'SetUserStore',
 
   // setting
-  OpenSetting = 'OpenSetting',
-  CloseSetting = 'CloseSetting',
+  OpenSettings = 'OpenSettings',
+  CloseSettings = 'CloseSettings',
 }
