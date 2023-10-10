@@ -21,7 +21,7 @@ export default class MainWindow {
       minHeight: 480,
       width: 720,
       height: 480,
-      transparent: false,
+      transparent: true,
       autoHideMenuBar: true,
       frame: false,
       webPreferences: {

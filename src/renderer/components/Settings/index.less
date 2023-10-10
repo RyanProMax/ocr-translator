@@ -1,3 +1,48 @@
 @import '../../styles/common.less';
 
-.settings {}
+.settings {
+  width: 100vw;
+  height: 100vh;
+  border-radius: @borderRadius;
+  overflow: hidden;
+  background-color: @bg-0-90;
+  color: #fff;
+
+  &-titlebar {
+    -webkit-app-region: drag;
+    background-color: @bg-32-90;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    box-sizing: border-box;
+
+    &__icon-wrapper {
+      -webkit-app-region: no-drag;
+      display: flex;
+      align-items: center;
+    }
+
+    &__icon {
+      height: 18px;
+      margin-left: 8px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      .arco-icon {
+        height: 100%;
+        cursor: pointer;
+        fill: #fff;
+        transition: all .25s;
+
+        &:hover {
+          fill: @icon-hover-cyan;
+          color: @icon-hover-cyan;
+        }
+      }
+    }
+  }
+}
