@@ -4,8 +4,12 @@ Real-time screen capture, OCR and translation tool.
 
 ## Features
 
-- [ ] OCR
-- [ ] Translator
+- [x] OCR - Baidu
+- [x] Translator - Baidu
+- [ ] OCR - Local
+- [ ] Translator - Local
+- [ ] i18
+- [ ] light/dark mode
 
 ## License
 

@@ -8,6 +8,9 @@
   background-color: @bg-0-90;
   color: #fff;
 
+  display: flex;
+  flex-direction: column;
+
   &-titlebar {
     -webkit-app-region: drag;
     background-color: @bg-32-90;
@@ -43,6 +46,32 @@
           color: @icon-hover-cyan;
         }
       }
+    }
+  }
+
+  &-content {
+    width: 100%;
+    flex: 1;
+    display: flex;
+  }
+
+  &-menu {
+    width: 160px;
+
+    .arco-menu-item {
+      display: flex;
+      align-items: center;
+    }
+
+
+    .arco-icon {
+      margin-right: 10px !important;
+      margin-top: -1px;
+    }
+
+    .arco-icon,
+    .arco-menu-item {
+      font-size: 16px;
     }
   }
 }

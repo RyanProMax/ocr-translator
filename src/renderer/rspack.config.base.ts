@@ -26,6 +26,13 @@ const baseConfiguration: Configuration = {
   },
   builtins: {
     html,
+    pluginImport: [
+      {
+        libraryName: '@arco-design/web-react',
+        libraryDirectory: 'es',
+        style: true,
+      },
+    ],
   },
   module: {
     rules: [
