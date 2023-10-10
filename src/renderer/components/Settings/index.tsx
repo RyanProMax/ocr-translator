@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { Menu } from '@arco-design/web-react';
 import TitleBar from './TitleBar';
+import Sidebar, { MenuKey } from './Sidebar';
 
 import { ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
 import usePackageJson from 'src/renderer/hooks/usePackageJson';
-import { MenuKey, SettingsMenu } from './constant';
 
 import './index.less';
-
-const MenuItem = Menu.Item;
 
 
 export default () => {
@@ -28,23 +25,15 @@ export default () => {
   return (
     <div className='settings'>
       <TitleBar
-        title={`OCR Translator (ver ${packageJson.version})`}
+        title={`OCR Translator (ver ${packageJson?.version})`}
         onClose={onClose}
       />
       <div className='settings-content'>
-        <Menu
-          theme='dark'
+        <Sidebar
           collapse={collapse}
           selectedKeys={selectedKeys}
           onClickMenuItem={onClickMenuItem}
-          className='settings-menu'
-        >
-          {SettingsMenu.map(item => (
-            <MenuItem key={item.key}>
-              {item.Component}
-            </MenuItem>
-          ))}
-        </Menu>
+        />
       </div>
     </div >
   );

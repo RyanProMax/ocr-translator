@@ -13,4 +13,5 @@ Real-time screen capture, OCR and translation tool.
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/) © [Ryan](https://github.com/RyanProMax)
+[GNU Lesser General Public License v3.0](https://choosealicense.com/licenses/lgpl-3.0/) 
+© [Ryan](https://github.com/RyanProMax)
