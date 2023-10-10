@@ -62,10 +62,16 @@ export default () => {
           />
         </FormItem>
         <FormItem label='client_id' field='client_id'>
-          <Input placeholder='please enter your client_id.' />
+          <Input.Password
+            defaultVisibility={false}
+            placeholder='please enter your client_id.'
+          />
         </FormItem>
         <FormItem label='client_secret' field='client_secret'>
-          <Input placeholder='please enter your client_secret.' />
+          <Input.Password
+            defaultVisibility={false}
+            placeholder='please enter your client_secret.'
+          />
         </FormItem>
       </Form>
     </div>

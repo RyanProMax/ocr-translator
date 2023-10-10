@@ -3,6 +3,7 @@ import log from 'electron-log/renderer';
 
 import { callApi, ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
+import { BaiduStatusCode } from './constant';
 
 export enum OCRType {
   Baidu = 'BaiduOCTSecret',
@@ -31,12 +32,18 @@ class OCR {
 
   type = OCRType.Baidu;
   logger = log.scope('ocr');
+  accessToken = '';
 
   private prevImage: string = '';
   private prevResult: OCRResult = [];
 
   get domain() {
     return Domain[this.type];
+  }
+
+  setAccessToken(token: string) {
+    this.accessToken = token;
+    return this.setSecretValue('access_token', token);
   }
 
   getSecret() {
@@ -47,31 +54,39 @@ class OCR {
     return ipcRenderer.invoke(Channels.SetUserStore, this.type, value);
   }
 
+  async setSecretValue(key: string, value: unknown) {
+    const prevSecret = await this.getSecret();
+    return ipcRenderer.invoke(Channels.SetUserStore, this.type, {
+      ...prevSecret,
+      [key]: value,
+    });
+  }
+
   async getAccessToken() {
-    switch (this.type) {
-      case OCRType.Baidu: {
-        const secret: BaiduOCTSecret | null = await this.getSecret();
-        if (!secret?.client_id || !secret.client_secret) {
-          throw new Error('Please set secret first.');
-        }
-        // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
-        const { data: { access_token } } = await callApi({
-          domain: this.domain,
-          api: '/oauth/2.0/token',
-          method: 'post',
-          params: {
-            grant_type: 'client_credentials',
-            ...pick(secret, ['client_id', 'client_secret']),
+    if (!this.accessToken) {
+      switch (this.type) {
+        case OCRType.Baidu: {
+          const secret: BaiduOCTSecret | null = await this.getSecret();
+          if (!secret?.client_id || !secret.client_secret) {
+            throw new Error('Please set OCR secret first.');
           }
-        });
-        await ipcRenderer.invoke(Channels.SetUserStore, OCRType.Baidu, {
-          ...secret,
-          access_token,
-        });
-        return access_token as string;
+          // https://console.bce.baidu.com/tools/#/api?product=AI&project=%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB&parent=%E9%89%B4%E6%9D%83%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6&api=oauth%2F2.0%2Ftoken&method=post
+          const { data: { access_token } } = await callApi({
+            domain: this.domain,
+            api: '/oauth/2.0/token',
+            method: 'post',
+            params: {
+              grant_type: 'client_credentials',
+              ...pick(secret, ['client_id', 'client_secret']),
+            }
+          });
+          await this.setAccessToken(access_token);
+          break;
+        }
+        default: break;
       }
-      default: return '';
     }
+    return this.accessToken;
   }
 
   async fetchOCR(data: {
@@ -82,10 +97,8 @@ class OCR {
   }): Promise<BaiduOCRResult[]> {
     switch (this.type) {
       case OCRType.Baidu: {
-        let access_token: string = '';
-        const secret: BaiduOCTSecret | null = await this.getSecret();
-        if (!secret?.access_token) {
-          access_token = await this.getAccessToken();
+        if (!this.accessToken) {
+          await this.getAccessToken();
         }
         // simple diff
         if (isEqual(this.prevImage, data.image)) {
@@ -97,7 +110,7 @@ class OCR {
           api: '/rest/2.0/ocr/v1/general_basic',
           method: 'post',
           params: {
-            access_token,
+            access_token: this.accessToken,
           },
           data: {
             detect_direction: false,
@@ -106,6 +119,15 @@ class OCR {
             ...data
           }
         });
+        if (resData.error_msg) {
+          if ([
+            BaiduStatusCode.AccessTokenInvalid,
+            BaiduStatusCode.AccessTokenExpired,
+          ].includes(resData.error_code)) {
+            this.setAccessToken('');
+          }
+          throw new Error(resData.error_msg);
+        }
         this.prevResult = resData.words_result as BaiduOCRResult[];
         return this.prevResult;
       }
