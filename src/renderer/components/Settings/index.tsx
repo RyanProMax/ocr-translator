@@ -1,9 +1,13 @@
+import usePackageJson from 'src/renderer/hooks/usePackageJson';
+
 import './index.less';
 
 export default () => {
+  const packageJson = usePackageJson();
+
   return (
     <div className='settings'>
-      123
+      {JSON.stringify(packageJson)}
     </div >
   );
 };

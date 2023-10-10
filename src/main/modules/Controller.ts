@@ -9,6 +9,7 @@ import Settings from './Settings';
 import { logger } from '../utils/logger';
 import { Channels } from '../../common/constant';
 import { onDrag } from '../utils/drag';
+import { getPackageJson } from '../utils';
 
 export default class Controller {
   logger = logger.scope('controller');
@@ -54,6 +55,8 @@ export default class Controller {
       this.logger.info('app quit');
       app.quit();
     });
+
+    ipcMain.handle(Channels.GetPackageJson, getPackageJson);
 
     // drag event
     onDrag();

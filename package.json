@@ -22,8 +22,11 @@
   "keywords": [
     "ocr",
     "translator",
+    "translation",
     "real-time",
-    "screen capture"
+    "screen capture",
+    "electron",
+    "react"
   ],
   "devDependencies": {
     "@arco-design/web-react": "^2.53.2",
@@ -64,13 +67,6 @@
   "devEngines": {
     "node": ">=16.x",
     "npm": ">=8.x"
-  },
-  "electronmon": {
-    "patterns": [
-      "!**/**",
-      "src/main/**"
-    ],
-    "logLevel": "quiet"
   },
   "license": "MIT"
 }

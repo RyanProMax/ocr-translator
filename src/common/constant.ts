@@ -11,6 +11,7 @@ export enum Channels {
   // main event
   Drag = 'Drag',
   Resize = 'Resize',
+  GetPackageJson = 'GetPackageJson',
 
   // capture screen event
   CropScreenShow = 'CropScreenShow',

@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import path from 'path';
 import { URL } from 'url';
+import fse from 'fs-extra';
 
 import { port } from '../../common/env';
 
@@ -29,4 +30,12 @@ export function getPreloadPath(): string {
 
 export const removeFileExtname = (fileName: string) => {
   return path.basename(fileName, path.extname(fileName));
+};
+
+export const getPackageJson = () => {
+  const filePath = app.isPackaged
+    ? path.resolve(__dirname, '../package.json')
+    : path.join(process.cwd(), 'package.json');
+
+  return fse.readFile(filePath, 'utf-8');
 };
