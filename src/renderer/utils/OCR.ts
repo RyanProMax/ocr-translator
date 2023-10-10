@@ -4,8 +4,9 @@ import log from 'electron-log/renderer';
 import { callApi, ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
 
-enum OCRType {
+export enum OCRType {
   Baidu = 'BaiduOCTSecret',
+  Local = 'LocalOTSecret',
 }
 
 interface BaiduOCTSecret {
@@ -22,6 +23,7 @@ type OCRResult = BaiduOCRResult[];
 
 const Domain = {
   [OCRType.Baidu]: 'https://aip.baidubce.com',
+  [OCRType.Local]: '',
 };
 
 class OCR {
@@ -39,6 +41,10 @@ class OCR {
 
   getSecret() {
     return ipcRenderer.invoke(Channels.GetUserStore, this.type);
+  }
+
+  setSecret(value: unknown) {
+    return ipcRenderer.invoke(Channels.SetUserStore, this.type, value);
   }
 
   async getAccessToken() {
