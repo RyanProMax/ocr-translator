@@ -10,10 +10,10 @@ export default () => {
   useEffect(() => {
     (async () => {
       const _packageJson = await ipcRenderer.invoke(Channels.GetPackageJson);
+      console.log('packageJson', JSON.parse(_packageJson));
       setPackageJson(_packageJson);
     })();
   }, []);
 
-  console.log('packageJson', JSON.parse(packageJson));
   return pick(JSON.parse(packageJson), ['name', 'description', 'version', 'license']);
 };

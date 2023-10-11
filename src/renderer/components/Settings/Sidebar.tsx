@@ -1,6 +1,6 @@
 import { Menu } from '@arco-design/web-react';
 import {
-  IconRobot, IconTranslate, IconInfoCircle
+  IconScan, IconTranslate, IconInfoCircle
 } from '@arco-design/web-react/icon';
 
 const MenuItem = Menu.Item;
@@ -15,7 +15,7 @@ export const SettingsMenu = [
   {
     key: MenuKey.OCR,
     Component: <>
-      <IconRobot /> OCR
+      <IconScan /> OCR
     </>
   },
   {

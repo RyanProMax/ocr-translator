@@ -1,6 +1,8 @@
 import { Rectangle } from 'electron/renderer';
 import axios, { AxiosRequestConfig } from 'axios';
 
+import { Channels } from 'src/common/constant';
+
 export const createTransparentImage = () => {
   const canvas = document.createElement('canvas');
   canvas.width = window.innerWidth;
@@ -62,11 +64,14 @@ export const captureVideo = ({
 };
 
 
-export const callApi = ({ domain, api, headers, ...config }: AxiosRequestConfig & {
+export const callApi = async ({
+  domain, api, needRaw = false, headers, ...config
+}: AxiosRequestConfig & {
   domain?: string
   api?: string
+  needRaw?: boolean
 }) => {
-  return axios({
+  const result = await axios({
     headers: {
       Accept: 'application/json',
       ['Content-Type']: config.method?.toLowerCase() === 'post'
@@ -78,4 +83,13 @@ export const callApi = ({ domain, api, headers, ...config }: AxiosRequestConfig 
     method: 'get',
     ...config,
   });
+  return needRaw ? result : result.data;
+};
+
+export const getUserStore = <T>(key: T) => {
+  return ipcRenderer.invoke(Channels.GetUserStore, key);
+};
+
+export const setUserStore = <T, U>(key: T, value: U) => {
+  return ipcRenderer.invoke(Channels.SetUserStore, key, value);
 };

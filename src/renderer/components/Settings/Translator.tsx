@@ -1,16 +1,16 @@
 import { Form, Radio, Input } from '@arco-design/web-react';
 import { useEffect, useRef } from 'react';
-import useOCR from 'src/renderer/hooks/useOCR';
-import { OCRType } from 'src/renderer/servers/Server';
+import useTranslator from 'src/renderer/hooks/useTranslator';
+import { TranslatorType } from 'src/renderer/servers/Server';
 
 const FormItem = Form.Item;
 
 export default () => {
   const [form] = Form.useForm();
   const secretRef = useRef<any>();
-  const { type, getOCRSecret, setOCRSecret } = useOCR();
+  const { type, getTranslatorSecret, setTranslatorSecret } = useTranslator();
 
-  const onChangeType = (value: OCRType) => {
+  const onChangeType = (value: TranslatorType) => {
     console.log('value', value);
   };
 
@@ -19,24 +19,24 @@ export default () => {
       ...secretRef.current,
       ...changeValue,
     };
-    return setOCRSecret(secretRef.current);
+    setTranslatorSecret(secretRef.current);
   };
 
   useEffect(() => {
     (async () => {
-      const OCRSecret = await getOCRSecret();
-      if (OCRSecret) {
-        secretRef.current = OCRSecret;
+      const translatorSecret = await getTranslatorSecret();
+      if (translatorSecret) {
+        secretRef.current = translatorSecret;
         form.setFieldsValue({
-          client_id: OCRSecret.client_id,
-          client_secret: OCRSecret.client_secret,
+          client_id: translatorSecret.client_id,
+          client_secret: translatorSecret.client_secret,
         });
       }
     })();
   }, []);
 
   return (
-    <div className='settings-main-content settings-OCR'>
+    <div className='settings-main-content settings-translator'>
       <Form
         form={form}
         autoComplete='off'
@@ -47,15 +47,15 @@ export default () => {
           span: 16,
         }}
         onChange={onChangeForm}
-        className='settings-OCR__form'
+        className='settings-translator__form'
       >
         <FormItem label='Type'>
           <Radio.Group
             type='button'
-            options={Object.entries(OCRType).map(([key, value]) => ({
+            options={Object.entries(TranslatorType).map(([key, value]) => ({
               label: key,
               value,
-              disabled: value !== OCRType.Baidu
+              disabled: value !== TranslatorType.Baidu
             }))}
             value={type}
             onChange={onChangeType}

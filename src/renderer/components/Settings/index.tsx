@@ -1,6 +1,7 @@
 import { FC, useMemo, useState } from 'react';
-import TitleBar from './TitleBar';
+import Titlebar from './Titlebar';
 import Sidebar, { MenuKey } from './Sidebar';
+import Translator from './Translator';
 
 import { ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
@@ -30,13 +31,16 @@ export default () => {
       case MenuKey.OCR: {
         return OCR;
       }
+      case MenuKey.Translator: {
+        return Translator;
+      }
       default: return () => null;
     }
   }, [selectedKeys]);
 
   return (
     <div className='settings'>
-      <TitleBar
+      <Titlebar
         title={`OCR Translator (ver ${packageJson?.version})`}
         onClose={onClose}
       />
