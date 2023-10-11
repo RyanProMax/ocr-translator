@@ -1,9 +1,8 @@
 import classnames from 'classnames';
 
-import { IconClose, IconPlayArrow, IconLoading } from '@arco-design/web-react/icon';
+import { IconClose, IconLoading, IconRecordStop, IconPlayArrow } from '@arco-design/web-react/icon';
 import IconScreenCapture from 'src/renderer/images/ScreenCapture.svg';
 import IconSetting from 'src/renderer/images/Setting.svg';
-import IconStop from 'src/renderer/images/Stop.svg';
 import { LooperStatus } from './constant';
 import { useMemo } from 'react';
 
@@ -19,21 +18,13 @@ export default ({ show, looperStatus, onClickIcon }: {
   show: boolean
   onClickIcon: (type: Icon) => Promise<unknown>
 }) => {
-  const renderLooperIcon = useMemo(() => {
-    const onClick = () => onClickIcon(Icon.TriggerStart);
-
+  const IconLooper = useMemo(() => {
     switch (looperStatus) {
-      case LooperStatus.Loading: return (
-        <IconLoading spin onClick={onClick} />
-      );
-      case LooperStatus.Running: return (
-        <IconStop className='arco-icon__native' onClick={onClick} />
-      );
-      default: return (
-        <IconPlayArrow onClick={onClick} />
-      );
+      case LooperStatus.Loading: return IconLoading;
+      case LooperStatus.Running: return IconRecordStop;
+      default: return IconPlayArrow;
     }
-  }, [looperStatus, onClickIcon]);
+  }, [looperStatus]);
 
   const looperTitle = useMemo(() => {
     switch (looperStatus) {
@@ -56,7 +47,7 @@ export default ({ show, looperStatus, onClickIcon }: {
           <IconScreenCapture className='arco-icon__native' onClick={() => onClickIcon(Icon.ScreenCapture)} />
         </div>
         <div title={looperTitle} className='home-control-bar__icon-wrapper'>
-          {renderLooperIcon}
+          <IconLooper onClick={() => onClickIcon(Icon.TriggerStart)} />
         </div>
         <div title='setting' className='home-control-bar__icon-wrapper'>
           <IconSetting className='arco-icon__native' onClick={() => onClickIcon(Icon.Settings)} />
