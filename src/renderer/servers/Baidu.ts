@@ -2,7 +2,6 @@ import { isEqual, pick } from 'lodash-es';
 import log from 'electron-log/renderer';
 
 import { callApi, getUserStore, setUserStore } from 'src/renderer/utils';
-import { BaiduStatusCode } from '../utils/constant';
 
 export enum BaiduApp {
   OCR = 'BaiduOCRSecret',
@@ -15,6 +14,11 @@ export enum BaiduTranslatorLanguage {
   Chinese = 'zh',
 }
 
+export enum BaiduStatusCode {
+  AccessTokenInvalid = 110,
+  AccessTokenExpired = 111,
+}
+
 export default class Baidu {
   private logger = log.scope('Baidu');
   private domain = 'https://aip.baidubce.com';
@@ -22,10 +26,17 @@ export default class Baidu {
     [BaiduApp.OCR]: '',
     [BaiduApp.Translator]: ''
   };
-  private prevState = {
-    OCRImage: '',
-    OCRResult: [] as OCRResult
-  };
+  private prevState: {
+    OCRParams: OCRParameter | null,
+    OCRResult: OCRResult
+    translatorParams: TranslatorParameter | null
+    translatorResult: TranslatorResult
+  } = {
+      OCRParams: null,
+      OCRResult: [],
+      translatorParams: null,
+      translatorResult: [],
+    };
 
   private getSecret(appKey: BaiduApp): Promise<BaiduOCRSecret | null> {
     return getUserStore(appKey);
@@ -72,7 +83,7 @@ export default class Baidu {
       await this.getAccessToken(appKey);
     }
     // simple diff
-    if (isEqual(this.prevState.OCRImage, params.image)) {
+    if (isEqual(this.prevState.OCRParams, params)) {
       this.logger.info('repeat image, skip');
       return this.prevState.OCRResult as OCRResult;
     }
@@ -104,7 +115,7 @@ export default class Baidu {
 
     this.prevState = {
       ...this.prevState,
-      OCRImage: params.image,
+      OCRParams: params,
       OCRResult: result,
     };
     return result;
@@ -114,6 +125,11 @@ export default class Baidu {
     const appKey = BaiduApp.Translator;
     if (!this.accessToken[appKey]) {
       await this.getAccessToken(appKey);
+    }
+    // simple diff
+    if (isEqual(this.prevState.translatorParams, params)) {
+      this.logger.info('repeat params, skip');
+      return this.prevState.translatorResult as TranslatorResult;
     }
     const resData: BaiduTranslatorResponseData = await callApi({
       domain: this.domain,
@@ -141,6 +157,12 @@ export default class Baidu {
       throw new Error(resData.error_msg);
     }
     const { result: { trans_result } } = resData;
-    return trans_result.map(x => x.dst) as TranslatorResult;
+    const result: TranslatorResult = trans_result.map(x => x.dst);
+    this.prevState = {
+      ...this.prevState,
+      translatorParams: params,
+      translatorResult: result,
+    };
+    return result;
   }
 }

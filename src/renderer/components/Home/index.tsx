@@ -62,8 +62,8 @@ export default () => {
                   type: 'info',
                   message: `cost ${round(looperCost / 1000, 2)}s` +
                     `(capture: ${captureCost}ms,` +
-                    `OCR: ${ocrCost}ms,` +
-                    `translator: ${translatorCost}ms)`
+                    (ocrCost > 0 ? ` OCR: ${ocrCost}ms,` : ' OCR: skip') +
+                    (translatorCost > 0 ? ` translator: ${translatorCost}ms)` : ' translator: skip')
                 });
               },
               onError: error => {
