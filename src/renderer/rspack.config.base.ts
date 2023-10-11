@@ -24,13 +24,24 @@ const baseConfiguration: Configuration = {
   resolve: {
     tsConfigPath: path.resolve(process.cwd(), './tsconfig.json'),
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
   builtins: {
     html,
     pluginImport: [
       {
         libraryName: '@arco-design/web-react',
         libraryDirectory: 'es',
+        camelToDashComponentName: false,
         style: true,
+      },
+      {
+        libraryName: '@arco-design/web-react/icon',
+        libraryDirectory: 'react-icon',
+        camelToDashComponentName: false,
       },
     ],
   },

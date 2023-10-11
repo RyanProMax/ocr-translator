@@ -61,15 +61,24 @@
         margin-left: 0;
       }
 
-      .arco-icon {
+      .arco-icon,
+      .arco-icon__native {
         height: 100%;
         cursor: pointer;
-        fill: #fff;
         transition: all .25s;
+      }
 
+      .arco-icon {
         &:hover {
-          fill: @icon-hover-cyan;
           color: @icon-hover-cyan;
+        }
+
+        &__native {
+          fill: #fff;
+
+          &:hover {
+            fill: @icon-hover-cyan;
+          }
         }
       }
     }

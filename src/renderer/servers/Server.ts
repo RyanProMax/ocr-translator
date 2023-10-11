@@ -114,7 +114,7 @@ class Server {
     }
   }
 
-  async stopLooper() {
+  stopLooper() {
     this.__START__ = false;
     this.clearTimer();
   }

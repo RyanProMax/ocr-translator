@@ -1,8 +1,11 @@
 import classnames from 'classnames';
 
-import { IconClose, IconPlayArrow } from '@arco-design/web-react/icon';
+import { IconClose, IconPlayArrow, IconLoading } from '@arco-design/web-react/icon';
 import IconScreenCapture from 'src/renderer/images/ScreenCapture.svg';
 import IconSetting from 'src/renderer/images/Setting.svg';
+import IconStop from 'src/renderer/images/Stop.svg';
+import { LooperStatus } from './constant';
+import { useMemo } from 'react';
 
 export enum Icon {
   ScreenCapture,
@@ -11,10 +14,35 @@ export enum Icon {
   Close,
 }
 
-export default ({ show, onClickIcon }: {
+export default ({ show, looperStatus, onClickIcon }: {
+  looperStatus: LooperStatus
   show: boolean
   onClickIcon: (type: Icon) => Promise<unknown>
 }) => {
+  const renderLooperIcon = useMemo(() => {
+    const onClick = () => onClickIcon(Icon.TriggerStart);
+
+    switch (looperStatus) {
+      case LooperStatus.Loading: return (
+        <IconLoading spin onClick={onClick} />
+      );
+      case LooperStatus.Running: return (
+        <IconStop className='arco-icon__native' onClick={onClick} />
+      );
+      default: return (
+        <IconPlayArrow onClick={onClick} />
+      );
+    }
+  }, [looperStatus, onClickIcon]);
+
+  const looperTitle = useMemo(() => {
+    switch (looperStatus) {
+      case LooperStatus.Loading: return 'loading';
+      case LooperStatus.Running: return 'stop';
+      default: return 'start';
+    }
+  }, [looperStatus]);
+
   return (
     <div
       className={classnames('home-control-bar', {
@@ -25,13 +53,13 @@ export default ({ show, onClickIcon }: {
       </div>
       <div className='home-control-bar__center'>
         <div title='capture screen' className='home-control-bar__icon-wrapper'>
-          <IconScreenCapture className='arco-icon' onClick={() => onClickIcon(Icon.ScreenCapture)} />
+          <IconScreenCapture className='arco-icon__native' onClick={() => onClickIcon(Icon.ScreenCapture)} />
         </div>
-        <div title='start' className='home-control-bar__icon-wrapper'>
-          <IconPlayArrow onClick={() => onClickIcon(Icon.TriggerStart)} />
+        <div title={looperTitle} className='home-control-bar__icon-wrapper'>
+          {renderLooperIcon}
         </div>
         <div title='setting' className='home-control-bar__icon-wrapper'>
-          <IconSetting className='arco-icon' onClick={() => onClickIcon(Icon.Settings)} />
+          <IconSetting className='arco-icon__native' onClick={() => onClickIcon(Icon.Settings)} />
         </div>
       </div>
       <div className='home-control-bar__right'>

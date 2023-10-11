@@ -9,27 +9,20 @@ import { Channels } from 'src/common/constant';
 import { server } from 'src/renderer/servers/Server';
 
 import ControlBar, { Icon } from './ControlBar';
-import Tips, { ITips } from './Tips';
+import Tips from './Tips';
+import { DEFAULT_TEXT, DEFAULT_TIPS, LooperStatus } from './constant';
 
 import './index.less';
 
 const homeLogger = log.scope('home');
 
-const DEFAULT_TEXT = [
-  { text: 'Welcome to  OCR Translator.', fontSize: 20 },
-  { text: '1. click [capture screen] icon', fontSize: 16 },
-  { text: '2. select region', fontSize: 16 },
-  { text: '3. click [start]', fontSize: 16 },
-];
-
-const DEFAULT_TIPS: ITips = { type: 'info', message: '' };
-
 export default () => {
   const { cursorEnter, mouseEvent } = useDrag();
   const [content, setContent] = useState(DEFAULT_TEXT);
-  const [tips, setTips] = useState<ITips>(DEFAULT_TIPS);
+  const [tips, setTips] = useState(DEFAULT_TIPS);
   const [isResize, setIsResize] = useState(false);
   const [start, setStart] = useState(false);
+  const [looperStatus, setLooperStatus] = useState(LooperStatus.Stop);
   const showControlBar = cursorEnter || isResize;
 
   const onClickIcon = async (type: Icon) => {
@@ -40,11 +33,16 @@ export default () => {
       }
       case Icon.TriggerStart: {
         if (!start) {
+          if (looperStatus === LooperStatus.Loading) {
+            return;
+          }
+          setLooperStatus(LooperStatus.Loading);
           const result = await ipcRenderer.invoke(Channels.GetScreenSource);
           homeLogger.info('invoke GetScreenSource', result);
           const { errorMessage, data } = result;
           if (errorMessage) {
             setTips({ type: 'error', message: `Error: ${errorMessage}` });
+            setLooperStatus(LooperStatus.Stop);
           } else {
             const { id, bounds } = data;
             server.startLooper({
@@ -74,13 +72,15 @@ export default () => {
               }
             });
             setStart(true);
+            setLooperStatus(LooperStatus.Running);
           }
         } else {
           // stop
           server.stopLooper();
-          setStart(false);
           setContent(DEFAULT_TEXT);
           setTips(DEFAULT_TIPS);
+          setStart(false);
+          setLooperStatus(LooperStatus.Stop);
         }
         return;
       }
@@ -113,6 +113,7 @@ export default () => {
     })}>
       <ControlBar
         show={showControlBar}
+        looperStatus={looperStatus}
         onClickIcon={onClickIcon}
       />
       <div className='home-content'>
