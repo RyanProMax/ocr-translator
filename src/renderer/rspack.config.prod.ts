@@ -8,7 +8,6 @@ const rootPath = process.cwd();
 
 const prodConfiguration: Configuration = {
   mode: 'production',
-  target: 'electron-renderer',
   output: {
     filename: '[name].[contenthash].js',
     path: path.join(rootPath, 'build/renderer'),

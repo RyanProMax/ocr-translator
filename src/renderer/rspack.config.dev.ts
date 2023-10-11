@@ -6,7 +6,6 @@ import baseConfiguration from './rspack.config.base';
 
 const devConfiguration: Configuration = {
   mode: 'development',
-  target: 'web',
   devServer: {
     port,
     hot: true,

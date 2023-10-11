@@ -20,6 +20,7 @@ const html = Object.values(Pages).map(filename => ({
 }));
 
 const baseConfiguration: Configuration = {
+  target: 'web',
   entry,
   resolve: {
     tsConfigPath: path.resolve(process.cwd(), './tsconfig.json'),
