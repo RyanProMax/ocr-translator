@@ -118,6 +118,7 @@ export default class Baidu {
       OCRParams: params,
       OCRResult: result,
     };
+    this.logger.info('OCR Result', result);
     return result;
   }
 
@@ -163,6 +164,7 @@ export default class Baidu {
       translatorParams: params,
       translatorResult: result,
     };
+    this.logger.info('Translator Result', result);
     return result;
   }
 }

@@ -10,7 +10,7 @@ import { server } from 'src/renderer/servers/Server';
 
 import ControlBar, { Icon } from './ControlBar';
 import Tips from './Tips';
-import { DEFAULT_TEXT, DEFAULT_TIPS, LooperStatus } from './constant';
+import { DEFAULT_TEXT, DEFAULT_TIPS, FontSize, LooperStatus } from './constant';
 
 import './index.less';
 
@@ -54,7 +54,7 @@ export default () => {
               }) => {
                 setContent(result.map(text => ({
                   text,
-                  fontSize: 16
+                  fontSize: FontSize.Normal
                 })));
                 setTips({
                   type: 'info',
@@ -96,7 +96,7 @@ export default () => {
 
   useEffect(() => {
     const handleResize = throttle((_: Electron.IpcRendererEvent, _isResize: boolean) => {
-      console.log('handleResize', handleResize);
+      // console.log('handleResize', handleResize);
       setIsResize(_isResize);
     }, 50);
 
