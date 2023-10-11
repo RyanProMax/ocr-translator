@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { round } from 'lodash-es';
+import { round, throttle } from 'lodash-es';
 import classnames from 'classnames';
 import log from 'electron-log/renderer';
 
@@ -25,9 +25,9 @@ const DEFAULT_TEXT = [
 const DEFAULT_TIPS: ITips = { type: 'info', message: '' };
 
 export default () => {
+  const { cursorEnter, mouseEvent } = useDrag();
   const [content, setContent] = useState(DEFAULT_TEXT);
   const [tips, setTips] = useState<ITips>(DEFAULT_TIPS);
-  const [cursorEnter, setCursorEnter] = useState(false);
   const [isResize, setIsResize] = useState(false);
   const [start, setStart] = useState(false);
   const showControlBar = cursorEnter || isResize;
@@ -95,10 +95,10 @@ export default () => {
   };
 
   useEffect(() => {
-    const handleResize = (_: Electron.IpcRendererEvent, _isResize: boolean) => {
+    const handleResize = throttle((_: Electron.IpcRendererEvent, _isResize: boolean) => {
       console.log('handleResize', handleResize);
       setIsResize(_isResize);
-    };
+    }, 50);
 
     ipcRenderer.on(Channels.Resize, handleResize);
 
@@ -108,16 +108,9 @@ export default () => {
   }, []);
 
   return (
-    <div
-      onMouseEnter={() => setCursorEnter(true)}
-      onMouseLeave={() => setCursorEnter(false)}
-      onMouseDown={() => useDrag(true)}
-      onMouseUp={() => useDrag(false)}
-      onContextMenu={() => useDrag(false)}
-      className={classnames('home', {
-        'home--show-control-bar': showControlBar
-      })}
-    >
+    <div {...mouseEvent} className={classnames('home', {
+      'home--show-control-bar': showControlBar
+    })}>
       <ControlBar
         show={showControlBar}
         onClickIcon={onClickIcon}

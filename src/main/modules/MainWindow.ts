@@ -44,10 +44,6 @@ export default class MainWindow {
   register() {
     this.browserWindow.on('will-resize', () => {
       this.browserWindow.webContents.send(Channels.Resize, true);
-
-      this.browserWindow.once('resized', () => {
-        this.browserWindow.webContents.send(Channels.Resize, false);
-      });
     });
   }
 }

@@ -93,17 +93,20 @@ class Server {
 
       const translatorResult = await server.start();
       const looperCost = Date.now() - startTime;
-      onSuccess({
-        ...translatorResult,
-        captureCost,
-        looperCost,
-      });
 
-      if (timeout > 0 && this.__START__) {
-        this.clearTimer();
-        this.__TIMER__ = window.setTimeout(() => {
-          this.startLooper(params);
-        }, timeout);
+      if (this.__START__) {
+        onSuccess({
+          ...translatorResult,
+          captureCost,
+          looperCost,
+        });
+
+        if (timeout > 0) {
+          this.clearTimer();
+          this.__TIMER__ = window.setTimeout(() => {
+            this.startLooper(params);
+          }, timeout);
+        }
       }
     } catch (e) {
       this.logger.error('startLooper error', e);
