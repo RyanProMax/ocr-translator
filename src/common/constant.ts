@@ -18,6 +18,7 @@ export enum Channels {
   CropScreenHide = 'CropScreenHide',
   CropScreenConfirm = 'CropScreenConfirm',
   UpdateCropArea = 'UpdateCropArea',
+  UpdateCaptureBounds = 'UpdateCaptureBounds',
 
   // OCR
   GetScreenSource = 'GetScreenSource',

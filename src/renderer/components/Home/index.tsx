@@ -4,9 +4,10 @@ import classnames from 'classnames';
 import log from 'electron-log/renderer';
 
 import { ipcRenderer, loadStream } from 'src/renderer/utils';
-import useDrag from 'src/renderer/hooks/useDrag';
-import { Channels } from 'src/common/constant';
 import { server } from 'src/renderer/servers/Server';
+import { Channels } from 'src/common/constant';
+import useDrag from 'src/renderer/hooks/useDrag';
+import useBounds from 'src/renderer/hooks/useBounds';
 
 import ControlBar, { Icon } from './ControlBar';
 import Tips from './Tips';
@@ -24,6 +25,7 @@ export default () => {
   const [start, setStart] = useState(false);
   const [looperStatus, setLooperStatus] = useState(LooperStatus.Stop);
   const showControlBar = cursorEnter || isResize;
+  const boundsRef = useBounds();
 
   const onClickIcon = async (type: Icon) => {
     homeLogger.info('onClickIcon', type);
@@ -45,10 +47,11 @@ export default () => {
             setLooperStatus(LooperStatus.Stop);
           } else {
             const { id, bounds } = data;
+            boundsRef.current = bounds;
             server.startLooper({
               video: await loadStream(id),
               timeout: 200,
-              bounds,
+              bounds: boundsRef.current,
               onSuccess: ({
                 result, captureCost, looperCost, ocrCost, translatorCost
               }) => {

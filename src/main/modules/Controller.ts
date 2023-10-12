@@ -27,7 +27,7 @@ export default class Controller {
       await app.whenReady();
 
       this.mainWindow = new MainWindow();
-      this.captureScreen = new CaptureScreen();
+      this.captureScreen = new CaptureScreen(this);
       this.settings = new Settings(this);
       this.store = new Store();
 

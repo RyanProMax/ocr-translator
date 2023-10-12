@@ -1,7 +1,9 @@
 import {
   BrowserWindow, ipcMain, screen, desktopCapturer,
 } from 'electron';
+import debounce from 'lodash/debounce';
 
+import Controller from './Controller';
 import { logger } from '../utils/logger';
 import { getHtmlPath, getPreloadPath } from '../utils';
 import { Channels, Pages } from '../../common/constant';
@@ -11,6 +13,11 @@ export default class CaptureScreen {
   captured = false;
   cropWindow = this.createCropWindow();
   captureWindow = this.createCaptureWindow();
+  controller: Controller;
+
+  constructor(controller: Controller) {
+    this.controller = controller;
+  }
 
   register() {
     ipcMain.on(Channels.CropScreenShow, () => {
@@ -74,6 +81,14 @@ export default class CaptureScreen {
         };
       }
     });
+
+    this.captureWindow.on('move', debounce(() => {
+      const bounds = this.captureWindow.getBounds();
+      const { mainWindow } = this.controller;
+      if (mainWindow) {
+        mainWindow.browserWindow.webContents.send(Channels.UpdateCaptureBounds, bounds);
+      }
+    }, 100));
   }
 
   private createCropWindow() {
