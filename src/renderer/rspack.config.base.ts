@@ -55,7 +55,17 @@ const baseConfiguration: Configuration = {
       },
       {
         test: /\.less$/,
-        use: ['less-loader'],
+        use: [{
+          loader: 'less-loader',
+          options: {
+            lessOptions: {
+              modifyVars: {
+                'arcoblue-6': '#37D4CF',
+              },
+              javaScriptEnabled: true,
+            }
+          }
+        }],
         type: 'css',
       },
     ],

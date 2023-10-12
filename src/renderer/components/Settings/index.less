@@ -5,7 +5,7 @@
   height: 100vh;
   border-radius: @borderRadius;
   overflow: hidden;
-  background-color: @bg-0-90;
+  background-color: rgba(var(--color-bg-ot), 0.9);
   color: #fff;
 
   display: flex;
@@ -13,7 +13,7 @@
 
   &-titlebar {
     -webkit-app-region: drag;
-    background-color: @bg-32-90;
+    background-color: rgba(var(--color-bg-ot--32), 0.9);
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -42,8 +42,8 @@
         transition: all .25s;
 
         &:hover {
-          fill: @icon-hover-cyan;
-          color: @icon-hover-cyan;
+          fill: @color-primary;
+          color: @color-primary;
         }
       }
     }

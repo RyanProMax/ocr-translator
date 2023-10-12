@@ -1,10 +1,12 @@
+import { useMemo } from 'react';
 import classnames from 'classnames';
-
 import { IconClose, IconLoading, IconRecordStop, IconPlayArrow } from '@arco-design/web-react/icon';
+
+import { LooperStatus } from './constant';
+
 import IconScreenCapture from 'src/renderer/images/ScreenCapture.svg';
 import IconSetting from 'src/renderer/images/Setting.svg';
-import { LooperStatus } from './constant';
-import { useMemo } from 'react';
+import useDarkMode from 'src/renderer/hooks/useDarkMode';
 
 export enum Icon {
   ScreenCapture,
@@ -18,6 +20,8 @@ export default ({ show, looperStatus, onClickIcon }: {
   show: boolean
   onClickIcon: (type: Icon) => Promise<unknown>
 }) => {
+  const { ThemeIcon, toggleTheme } = useDarkMode();
+
   const IconLooper = useMemo(() => {
     switch (looperStatus) {
       case LooperStatus.Loading: return IconLoading;
@@ -54,6 +58,9 @@ export default ({ show, looperStatus, onClickIcon }: {
         </div>
       </div>
       <div className='home-control-bar__right'>
+        <div title='toggle theme' className='home-control-bar__icon-wrapper'>
+          <ThemeIcon onClick={toggleTheme} />
+        </div>
         <div title='close' className='home-control-bar__icon-wrapper'>
           <IconClose onClick={() => onClickIcon(Icon.Close)} />
         </div>
