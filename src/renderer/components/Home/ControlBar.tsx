@@ -18,7 +18,7 @@ export enum Icon {
 export default ({ show, looperStatus, onClickIcon }: {
   looperStatus: LooperStatus
   show: boolean
-  onClickIcon: (type: Icon) => Promise<unknown>
+  onClickIcon: (type: Icon) => unknown
 }) => {
   const { ThemeIcon, toggleTheme } = useDarkMode();
 

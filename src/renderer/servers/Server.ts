@@ -100,17 +100,17 @@ class Server {
           captureCost,
           looperCost,
         });
+
+        if (timeout > 0) {
+          this.clearTimer();
+          this.__TIMER__ = window.setTimeout(() => {
+            this.startLooper(params);
+          }, timeout);
+        }
       }
     } catch (e) {
       this.logger.error('startLooper error', e);
       onError((e as any).message);
-    } finally {
-      if (timeout > 0 && this.__START__) {
-        this.clearTimer();
-        this.__TIMER__ = window.setTimeout(() => {
-          this.startLooper(params);
-        }, timeout);
-      }
     }
   }
 
