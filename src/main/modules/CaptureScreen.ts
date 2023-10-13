@@ -89,6 +89,11 @@ export default class CaptureScreen {
         mainWindow.browserWindow.webContents.send(Channels.UpdateCaptureBounds, bounds);
       }
     }, 100));
+
+    ipcMain.on(Channels.HideCaptureWindow, () => {
+      this.logger.info(Channels.HideCaptureWindow);
+      this.captureWindow.hide();
+    });
   }
 
   private createCropWindow() {

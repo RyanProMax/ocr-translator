@@ -17,6 +17,7 @@ export enum Channels {
   CropScreenShow = 'CropScreenShow',
   CropScreenHide = 'CropScreenHide',
   CropScreenConfirm = 'CropScreenConfirm',
+  HideCaptureWindow = 'HideCaptureWindow',
   UpdateCropArea = 'UpdateCropArea',
   UpdateCaptureBounds = 'UpdateCaptureBounds',
 
