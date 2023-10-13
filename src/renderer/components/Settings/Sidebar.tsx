@@ -2,6 +2,7 @@ import { Menu } from '@arco-design/web-react';
 import {
   IconScan, IconTranslate, IconInfoCircle
 } from '@arco-design/web-react/icon';
+import { THEME } from 'src/renderer/hooks/useDarkMode';
 
 const MenuItem = Menu.Item;
 
@@ -34,16 +35,17 @@ export const SettingsMenu = [
 
 
 export default ({
-  collapse, selectedKeys,
+  collapse, selectedKeys, theme,
   onClickMenuItem
 }: {
+  theme: THEME
   collapse: boolean
   selectedKeys: string[]
   onClickMenuItem: (key: string) => unknown
 }) => {
   return (
     <Menu
-      theme='dark'
+      theme={theme}
       collapse={collapse}
       selectedKeys={selectedKeys}
       onClickMenuItem={onClickMenuItem}

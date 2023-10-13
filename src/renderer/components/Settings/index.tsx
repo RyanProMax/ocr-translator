@@ -13,7 +13,7 @@ import OCR from './OCR';
 
 
 export default () => {
-  useDarkMode();
+  const { theme } = useDarkMode();
   const packageJson = usePackageJson();
   const [collapse] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState([MenuKey.OCR]);
@@ -46,6 +46,7 @@ export default () => {
       />
       <div className='settings-content'>
         <Sidebar
+          theme={theme}
           collapse={collapse}
           selectedKeys={selectedKeys}
           onClickMenuItem={onClickMenuItem}

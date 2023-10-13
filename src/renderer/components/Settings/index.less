@@ -6,14 +6,16 @@
   border-radius: @borderRadius;
   overflow: hidden;
   background-color: rgba(var(--color-rgb-255), 0.9);
-  color: #fff;
+  color: var(--color-text-1);
+  border: 1px solid rgba(var(--color-rgb-22), 0.9);
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
 
   &-titlebar {
     -webkit-app-region: drag;
-    background-color: rgba(var(--color-rgb-32), 0.9);
+    background-color: rgba(var(--color-rgb-22), 0.9);
     width: 100%;
     display: flex;
     justify-content: space-between;
