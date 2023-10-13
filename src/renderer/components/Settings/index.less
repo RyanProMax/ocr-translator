@@ -1,13 +1,15 @@
 @import '../../styles/common.less';
 
+@opacity: 0.9;
+
 .settings {
   width: 100vw;
   height: 100vh;
   border-radius: @borderRadius;
   overflow: hidden;
-  background-color: rgba(var(--color-rgb-255), 0.9);
+  background-color: rgba(var(--color-rgb-255), 0.98);
   color: var(--color-text-1);
-  border: 1px solid rgba(var(--color-rgb-22), 0.9);
+  border: 1px solid rgba(var(--color-rgb-22), @opacity);
   box-sizing: border-box;
 
   display: flex;
@@ -15,7 +17,7 @@
 
   &-titlebar {
     -webkit-app-region: drag;
-    background-color: rgba(var(--color-rgb-22), 0.9);
+    background-color: rgba(var(--color-rgb-22), @opacity);
     width: 100%;
     display: flex;
     justify-content: space-between;
