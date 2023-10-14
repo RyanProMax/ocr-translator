@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import log from 'electron-log/renderer';
 
 import { ipcRenderer, loadStream } from 'src/renderer/utils';
-import { server } from 'src/renderer/servers/Server';
+import { server } from 'src/renderer/server';
 import { Channels } from 'src/common/constant';
 import useDrag from 'src/renderer/hooks/useDrag';
 import useBounds from 'src/renderer/hooks/useBounds';

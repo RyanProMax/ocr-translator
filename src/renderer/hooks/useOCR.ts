@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { BaiduApp } from '../servers/Baidu';
-import { OCRType } from '../servers/Server';
+
+import { BaiduApp } from 'src/lib/Baidu/renderer';
+import { OCRType } from 'src/renderer/server';
 import { getUserStore, setUserStore } from '../utils';
 
 export default () => {

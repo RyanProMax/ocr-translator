@@ -31,4 +31,7 @@ export enum Channels {
   // setting
   OpenSettings = 'OpenSettings',
   CloseSettings = 'CloseSettings',
+
+  // Tesseract
+  TesseractProcess = 'TesseractProcess',
 }

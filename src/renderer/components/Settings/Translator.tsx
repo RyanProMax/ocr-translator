@@ -1,7 +1,7 @@
 import { Form, Radio, Input } from '@arco-design/web-react';
 import { useEffect, useRef } from 'react';
 import useTranslator from 'src/renderer/hooks/useTranslator';
-import { TranslatorType } from 'src/renderer/servers/Server';
+import { TranslatorType } from 'src/renderer/server';
 
 const FormItem = Form.Item;
 

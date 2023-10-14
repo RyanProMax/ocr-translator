@@ -5,6 +5,9 @@ import Store from './Store';
 import CaptureScreen from './CaptureScreen';
 import Settings from './Settings';
 
+// libs
+import TesseractMain from '../../lib/Tesseract/main';
+
 // import { checkUpdate } from './updater';
 import { logger } from '../utils/logger';
 import { Channels } from '../../common/constant';
@@ -18,6 +21,7 @@ export default class Controller {
   captureScreen: CaptureScreen | null = null;
   settings: Settings | null = null;
   store: Store | null = null;
+  tesseract: TesseractMain | null = null;
 
   async startApp() {
     try {
@@ -30,6 +34,7 @@ export default class Controller {
       this.captureScreen = new CaptureScreen(this);
       this.settings = new Settings(this);
       this.store = new Store();
+      this.tesseract = new TesseractMain();
 
       // ensure run after initial MainWindow/CaptureScreen/Store
       this.registerMainEvent();
@@ -68,5 +73,8 @@ export default class Controller {
 
     // store event
     this.store?.register();
+
+    // tesseract event
+    this.tesseract?.register();
   }
 }

@@ -26,17 +26,7 @@ export default class Baidu {
     [BaiduApp.OCR]: '',
     [BaiduApp.Translator]: ''
   };
-  private prevState: {
-    OCRParams: OCRParameter | null,
-    OCRResult: OCRResult
-    translatorParams: TranslatorParameter | null
-    translatorResult: TranslatorResult
-  } = {
-      OCRParams: null,
-      OCRResult: [],
-      translatorParams: null,
-      translatorResult: [],
-    };
+  private prevState: PrevState = {};
 
   private getSecret(appKey: BaiduApp): Promise<BaiduOCRSecret | null> {
     return getUserStore(appKey);

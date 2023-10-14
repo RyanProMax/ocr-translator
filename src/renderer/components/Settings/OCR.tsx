@@ -1,7 +1,7 @@
 import { Form, Radio, Input } from '@arco-design/web-react';
 import { useEffect, useRef } from 'react';
 import useOCR from 'src/renderer/hooks/useOCR';
-import { OCRType } from 'src/renderer/servers/Server';
+import { OCRType } from 'src/renderer/server';
 
 const FormItem = Form.Item;
 

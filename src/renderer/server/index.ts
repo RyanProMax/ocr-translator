@@ -1,6 +1,6 @@
 import log from 'electron-log/renderer';
 import { captureVideo } from '../utils';
-import Baidu, { BaiduTranslatorLanguage } from './Baidu';
+import Baidu, { BaiduTranslatorLanguage } from 'src/lib/Baidu/renderer';
 
 export enum OCRType {
   Baidu = 'Baidu',

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { BaiduApp } from '../servers/Baidu';
-import { TranslatorType } from '../servers/Server';
+
+import { BaiduApp } from 'src/lib/Baidu/renderer';
+import { TranslatorType } from 'src/renderer/server';
 import { getUserStore, setUserStore } from '../utils';
 
 export default () => {
