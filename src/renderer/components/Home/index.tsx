@@ -11,7 +11,7 @@ import useBounds from 'src/renderer/hooks/useBounds';
 
 import ControlBar, { Icon } from './ControlBar';
 import Tips from './Tips';
-import { DEFAULT_TEXT, DEFAULT_TIPS, FontSize, LooperStatus } from './constant';
+import { DEFAULT_STYLE, DEFAULT_TEXT, DEFAULT_TIPS, LooperStatus } from './constant';
 
 import './index.less';
 
@@ -49,7 +49,7 @@ export default () => {
             }) => {
               setContent(result.map(text => ({
                 text,
-                fontSize: FontSize.Normal
+                style: DEFAULT_STYLE,
               })));
               setTips({
                 type: 'info',
@@ -126,8 +126,8 @@ export default () => {
         onClickIcon={onClickIcon}
       />
       <div className='home-content'>
-        {content.map(({ text, fontSize }, idx) => (
-          <span key={idx} className='home-content__item' style={{ fontSize }}>
+        {content.map(({ text, style }, idx) => (
+          <span key={idx} className='home-content__item' style={style}>
             {text}
           </span>
         ))}

@@ -1,13 +1,15 @@
 export enum FontSize {
-  Large = '4.8vw',
-  Normal = '3.6vw',
+  Large = '32px',
+  Normal = '24px',
 }
 
+export const DEFAULT_STYLE = { fontSize: FontSize.Normal };
+
 export const DEFAULT_TEXT = [
-  { text: 'Welcome to  OCR Translator.', fontSize: FontSize.Large },
-  { text: '1. click [capture screen] icon', fontSize: FontSize.Normal },
-  { text: '2. select region', fontSize: FontSize.Normal },
-  { text: '3. click [start]', fontSize: FontSize.Normal },
+  { text: 'Welcome to  OCR Translator.', style: DEFAULT_STYLE },
+  { text: '1. click [capture screen]', style: DEFAULT_STYLE },
+  { text: '2. select region', style: DEFAULT_STYLE },
+  { text: '3. click [start]', style: DEFAULT_STYLE },
 ];
 
 export const DEFAULT_TIPS: ITips = { type: 'info', message: '' };
