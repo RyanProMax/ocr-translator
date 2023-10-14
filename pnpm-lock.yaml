@@ -10,7 +10,7 @@ devDependencies:
     version: registry.npmmirror.com/@arco-design/web-react@2.53.2(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
   '@rspack/cli':
     specifier: ^0.3.6
-    version: registry.npmmirror.com/@rspack/cli@0.3.6
+    version: registry.npmmirror.com/@rspack/cli@0.3.6(react-refresh@0.14.0)
   '@svgr/webpack':
     specifier: ^8.1.0
     version: registry.npmmirror.com/@svgr/webpack@8.1.0(typescript@5.2.2)
@@ -82,7 +82,7 @@ devDependencies:
     version: registry.npmmirror.com/less@4.2.0
   less-loader:
     specifier: ^11.1.3
-    version: registry.npmmirror.com/less-loader@11.1.3(less@4.2.0)
+    version: registry.npmmirror.com/less-loader@11.1.3(less@4.2.0)(webpack@5.76.0)
   lodash:
     specifier: ^4.17.21
     version: registry.npmmirror.com/lodash@4.17.21
@@ -98,15 +98,24 @@ devDependencies:
   react-dom:
     specifier: ^18.2.0
     version: registry.npmmirror.com/react-dom@18.2.0(react@18.2.0)
+  react-refresh:
+    specifier: '>=0.10.0 <1.0.0'
+    version: registry.npmmirror.com/react-refresh@0.14.0
   rimraf:
     specifier: ^5.0.5
     version: registry.npmmirror.com/rimraf@5.0.5
+  tesseract.js:
+    specifier: ^5.0.2
+    version: registry.npmmirror.com/tesseract.js@5.0.2
   ts-node:
     specifier: ^10.9.1
     version: registry.npmmirror.com/ts-node@10.9.1(@types/node@20.8.2)(typescript@5.2.2)
   typescript:
     specifier: ^5.2.2
     version: registry.npmmirror.com/typescript@5.2.2
+  webpack:
+    specifier: ^5.0.0
+    version: registry.npmmirror.com/webpack@5.76.0
 
 packages:
 
@@ -2072,7 +2081,7 @@ packages:
     dev: true
     optional: true
 
-  registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin@0.5.10(webpack-dev-server@4.13.1)(webpack@5.76.0):
+  registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin@0.5.10(react-refresh@0.14.0)(webpack-dev-server@4.13.1)(webpack@5.76.0):
     resolution: {integrity: sha512-j0Ya0hCFZPd4x40qLzbhGsh9TMtdb+CJQiso+WxLOPNasohq9cc5SNUcwsZaRH6++Xh91Xkm/xHCkuIiIu0LUA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.10.tgz}
     id: registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin/0.5.10
     name: '@pmmmwh/react-refresh-webpack-plugin'
@@ -2108,6 +2117,7 @@ packages:
       find-up: registry.npmmirror.com/find-up@5.0.0
       html-entities: registry.npmmirror.com/html-entities@2.4.0
       loader-utils: registry.npmmirror.com/loader-utils@2.0.4
+      react-refresh: registry.npmmirror.com/react-refresh@0.14.0
       schema-utils: registry.npmmirror.com/schema-utils@3.3.0
       source-map: registry.npmmirror.com/source-map@0.7.4
       webpack: registry.npmmirror.com/webpack@5.76.0
@@ -2230,15 +2240,16 @@ packages:
       '@rspack/binding-win32-x64-msvc': registry.npmmirror.com/@rspack/binding-win32-x64-msvc@0.3.6
     dev: true
 
-  registry.npmmirror.com/@rspack/cli@0.3.6:
+  registry.npmmirror.com/@rspack/cli@0.3.6(react-refresh@0.14.0):
     resolution: {integrity: sha512-vPmZmfHb8REBw35WCT1fR1O/su6fft0Iv7eJGuXXnSfO9Fnjc4CbRahn23H/L6P65JWErqir8R/WLUBqFcnR/A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rspack/cli/-/cli-0.3.6.tgz}
+    id: registry.npmmirror.com/@rspack/cli/0.3.6
     name: '@rspack/cli'
     version: 0.3.6
     hasBin: true
     dependencies:
       '@discoveryjs/json-ext': registry.npmmirror.com/@discoveryjs/json-ext@0.5.7
       '@rspack/core': registry.npmmirror.com/@rspack/core@0.3.6
-      '@rspack/dev-server': registry.npmmirror.com/@rspack/dev-server@0.3.6(@rspack/core@0.3.6)
+      '@rspack/dev-server': registry.npmmirror.com/@rspack/dev-server@0.3.6(@rspack/core@0.3.6)(react-refresh@0.14.0)
       colorette: registry.npmmirror.com/colorette@2.0.19
       exit-hook: registry.npmmirror.com/exit-hook@3.2.0
       interpret: registry.npmmirror.com/interpret@3.1.1
@@ -2287,7 +2298,7 @@ packages:
       zod-validation-error: registry.npmmirror.com/zod-validation-error@1.2.0(zod@3.22.2)
     dev: true
 
-  registry.npmmirror.com/@rspack/dev-server@0.3.6(@rspack/core@0.3.6):
+  registry.npmmirror.com/@rspack/dev-server@0.3.6(@rspack/core@0.3.6)(react-refresh@0.14.0):
     resolution: {integrity: sha512-/4VqDHSjy+cPPdLfRFYxhQiB8MY3btBm5jWMHASi/LJiZxOoEcPGpAGV178wjEiX7sBpWBpNfbNTGvA/LbDHGA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rspack/dev-server/-/dev-server-0.3.6.tgz}
     id: registry.npmmirror.com/@rspack/dev-server/0.3.6
     name: '@rspack/dev-server'
@@ -2296,7 +2307,7 @@ packages:
       '@rspack/core': '*'
     dependencies:
       '@rspack/core': registry.npmmirror.com/@rspack/core@0.3.6
-      '@rspack/plugin-react-refresh': registry.npmmirror.com/@rspack/plugin-react-refresh@0.3.6(webpack-dev-server@4.13.1)(webpack@5.76.0)
+      '@rspack/plugin-react-refresh': registry.npmmirror.com/@rspack/plugin-react-refresh@0.3.6(react-refresh@0.14.0)(webpack-dev-server@4.13.1)(webpack@5.76.0)
       chokidar: registry.npmmirror.com/chokidar@3.5.3
       connect-history-api-fallback: registry.npmmirror.com/connect-history-api-fallback@2.0.0
       express: registry.npmmirror.com/express@4.18.1
@@ -2324,7 +2335,7 @@ packages:
       - webpack-plugin-serve
     dev: true
 
-  registry.npmmirror.com/@rspack/plugin-react-refresh@0.3.6(webpack-dev-server@4.13.1)(webpack@5.76.0):
+  registry.npmmirror.com/@rspack/plugin-react-refresh@0.3.6(react-refresh@0.14.0)(webpack-dev-server@4.13.1)(webpack@5.76.0):
     resolution: {integrity: sha512-xv5w8kWrRpdpa1wUVmW3ELvMW2T/xrcBX6UyeRfyQsnHpLzjpkUMRwU4CnD1ex1PzoE+CKrJbN9uuVqX1aukBQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rspack/plugin-react-refresh/-/plugin-react-refresh-0.3.6.tgz}
     id: registry.npmmirror.com/@rspack/plugin-react-refresh/0.3.6
     name: '@rspack/plugin-react-refresh'
@@ -2335,7 +2346,8 @@ packages:
       react-refresh:
         optional: true
     dependencies:
-      '@pmmmwh/react-refresh-webpack-plugin': registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin@0.5.10(webpack-dev-server@4.13.1)(webpack@5.76.0)
+      '@pmmmwh/react-refresh-webpack-plugin': registry.npmmirror.com/@pmmmwh/react-refresh-webpack-plugin@0.5.10(react-refresh@0.14.0)(webpack-dev-server@4.13.1)(webpack@5.76.0)
+      react-refresh: registry.npmmirror.com/react-refresh@0.14.0
       schema-utils: registry.npmmirror.com/schema-utils@4.2.0
     transitivePeerDependencies:
       - '@types/webpack'
@@ -3677,6 +3689,12 @@ packages:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/bluebird/-/bluebird-3.7.2.tgz}
     name: bluebird
     version: 3.7.2
+    dev: true
+
+  registry.npmmirror.com/bmp-js@0.1.0:
+    resolution: {integrity: sha512-vHdS19CnY3hwiNdkaqk93DvjVLfbEcI8mys4UjuWrlX1haDmroo8o4xCzh4wD6DGV6HxRCyauwhHRqMTfERtjw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/bmp-js/-/bmp-js-0.1.0.tgz}
+    name: bmp-js
+    version: 0.1.0
     dev: true
 
   registry.npmmirror.com/body-parser@1.20.0:
@@ -5971,6 +5989,12 @@ packages:
       safer-buffer: registry.npmmirror.com/safer-buffer@2.1.2
     dev: true
 
+  registry.npmmirror.com/idb-keyval@6.2.1:
+    resolution: {integrity: sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/idb-keyval/-/idb-keyval-6.2.1.tgz}
+    name: idb-keyval
+    version: 6.2.1
+    dev: true
+
   registry.npmmirror.com/ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ieee754/-/ieee754-1.2.1.tgz}
     name: ieee754
@@ -6118,6 +6142,12 @@ packages:
     hasBin: true
     dev: true
 
+  registry.npmmirror.com/is-electron@2.2.2:
+    resolution: {integrity: sha512-FO/Rhvz5tuw4MCWkpMzHFKWD2LsfHzIb7i6MdPYZ/KW7AlxawyLkqdy+jPZP1WubqEADE3O4FUENlJHDfQASRg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/is-electron/-/is-electron-2.2.2.tgz}
+    name: is-electron
+    version: 2.2.2
+    dev: true
+
   registry.npmmirror.com/is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/is-extglob/-/is-extglob-2.1.1.tgz}
     name: is-extglob
@@ -6193,6 +6223,12 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       which-typed-array: registry.npmmirror.com/which-typed-array@1.1.11
+    dev: true
+
+  registry.npmmirror.com/is-url@1.2.4:
+    resolution: {integrity: sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/is-url/-/is-url-1.2.4.tgz}
+    name: is-url
+    version: 1.2.4
     dev: true
 
   registry.npmmirror.com/is-what@3.14.1:
@@ -6395,7 +6431,7 @@ packages:
     version: 1.0.5
     dev: true
 
-  registry.npmmirror.com/less-loader@11.1.3(less@4.2.0):
+  registry.npmmirror.com/less-loader@11.1.3(less@4.2.0)(webpack@5.76.0):
     resolution: {integrity: sha512-A5b7O8dH9xpxvkosNrP0dFp2i/dISOJa9WwGF3WJflfqIERE2ybxh1BFDj5CovC2+jCE4M354mk90hN6ziXlVw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/less-loader/-/less-loader-11.1.3.tgz}
     id: registry.npmmirror.com/less-loader/11.1.3
     name: less-loader
@@ -6406,6 +6442,7 @@ packages:
       webpack: ^5.0.0
     dependencies:
       less: registry.npmmirror.com/less@4.2.0
+      webpack: registry.npmmirror.com/webpack@5.76.0
     dev: true
 
   registry.npmmirror.com/less@4.2.0:
@@ -6880,6 +6917,20 @@ packages:
     dev: true
     optional: true
 
+  registry.npmmirror.com/node-fetch@2.7.0:
+    resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/node-fetch/-/node-fetch-2.7.0.tgz}
+    name: node-fetch
+    version: 2.7.0
+    engines: {node: 4.x || >=6.0.0}
+    peerDependencies:
+      encoding: ^0.1.0
+    peerDependenciesMeta:
+      encoding:
+        optional: true
+    dependencies:
+      whatwg-url: registry.npmmirror.com/whatwg-url@5.0.0
+    dev: true
+
   registry.npmmirror.com/node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/node-forge/-/node-forge-1.3.1.tgz}
     name: node-forge
@@ -7000,6 +7051,13 @@ packages:
       define-lazy-prop: registry.npmmirror.com/define-lazy-prop@2.0.0
       is-docker: registry.npmmirror.com/is-docker@2.2.1
       is-wsl: registry.npmmirror.com/is-wsl@2.2.0
+    dev: true
+
+  registry.npmmirror.com/opencollective-postinstall@2.0.3:
+    resolution: {integrity: sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz}
+    name: opencollective-postinstall
+    version: 2.0.3
+    hasBin: true
     dev: true
 
   registry.npmmirror.com/opener@1.5.2:
@@ -7519,6 +7577,12 @@ packages:
     resolution: {integrity: sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerate/-/regenerate-1.4.2.tgz}
     name: regenerate
     version: 1.4.2
+    dev: true
+
+  registry.npmmirror.com/regenerator-runtime@0.13.11:
+    resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz}
+    name: regenerator-runtime
+    version: 0.13.11
     dev: true
 
   registry.npmmirror.com/regenerator-runtime@0.14.0:
@@ -8347,6 +8411,32 @@ packages:
       source-map-support: registry.npmmirror.com/source-map-support@0.5.21
     dev: true
 
+  registry.npmmirror.com/tesseract.js-core@5.0.0:
+    resolution: {integrity: sha512-lJur5LzjinW5VYMKlVNnBU2JPLpO+A9VqAYBeuV+ZgH0hKvsnm+536Yyp+/zRTBdLe7D6Kok0FN9g+TE4J8qGA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tesseract.js-core/-/tesseract.js-core-5.0.0.tgz}
+    name: tesseract.js-core
+    version: 5.0.0
+    dev: true
+
+  registry.npmmirror.com/tesseract.js@5.0.2:
+    resolution: {integrity: sha512-BbiaC3W7C23tjQfepPaXWiQFgEW9HFacpEFpZpuGsLfp1J7NPTLFj7II1Q2ukdPXNwh9z/KR0cikS2avpdEP0A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tesseract.js/-/tesseract.js-5.0.2.tgz}
+    name: tesseract.js
+    version: 5.0.2
+    requiresBuild: true
+    dependencies:
+      bmp-js: registry.npmmirror.com/bmp-js@0.1.0
+      idb-keyval: registry.npmmirror.com/idb-keyval@6.2.1
+      is-electron: registry.npmmirror.com/is-electron@2.2.2
+      is-url: registry.npmmirror.com/is-url@1.2.4
+      node-fetch: registry.npmmirror.com/node-fetch@2.7.0
+      opencollective-postinstall: registry.npmmirror.com/opencollective-postinstall@2.0.3
+      regenerator-runtime: registry.npmmirror.com/regenerator-runtime@0.13.11
+      tesseract.js-core: registry.npmmirror.com/tesseract.js-core@5.0.0
+      wasm-feature-detect: registry.npmmirror.com/wasm-feature-detect@1.5.1
+      zlibjs: registry.npmmirror.com/zlibjs@0.3.1
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   registry.npmmirror.com/text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/text-table/-/text-table-0.2.0.tgz}
     name: text-table
@@ -8410,6 +8500,12 @@ packages:
     name: totalist
     version: 1.1.0
     engines: {node: '>=6'}
+    dev: true
+
+  registry.npmmirror.com/tr46@0.0.3:
+    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tr46/-/tr46-0.0.3.tgz}
+    name: tr46
+    version: 0.0.3
     dev: true
 
   registry.npmmirror.com/tree-kill@1.2.2:
@@ -8719,6 +8815,12 @@ packages:
     dev: true
     optional: true
 
+  registry.npmmirror.com/wasm-feature-detect@1.5.1:
+    resolution: {integrity: sha512-GHr23qmuehNXHY4902/hJ6EV5sUANIJC3R/yMfQ7hWDg3nfhlcJfnIL96R2ohpIwa62araN6aN4bLzzzq5GXkg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/wasm-feature-detect/-/wasm-feature-detect-1.5.1.tgz}
+    name: wasm-feature-detect
+    version: 1.5.1
+    dev: true
+
   registry.npmmirror.com/watchpack@2.4.0:
     resolution: {integrity: sha512-Lcvm7MGST/4fup+ifyKi2hjyIAwcdI4HRgtvTpIUxBRhB+RFtUh8XtDOxUfctVCnhVi+QQj49i91OyvzkJl6cg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/watchpack/-/watchpack-2.4.0.tgz}
     name: watchpack
@@ -8735,6 +8837,12 @@ packages:
     version: 1.7.3
     dependencies:
       minimalistic-assert: registry.npmmirror.com/minimalistic-assert@1.0.1
+    dev: true
+
+  registry.npmmirror.com/webidl-conversions@3.0.1:
+    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz}
+    name: webidl-conversions
+    version: 3.0.1
     dev: true
 
   registry.npmmirror.com/webpack-bundle-analyzer@4.6.1:
@@ -8914,6 +9022,15 @@ packages:
     name: websocket-extensions
     version: 0.1.4
     engines: {node: '>=0.8.0'}
+    dev: true
+
+  registry.npmmirror.com/whatwg-url@5.0.0:
+    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/whatwg-url/-/whatwg-url-5.0.0.tgz}
+    name: whatwg-url
+    version: 5.0.0
+    dependencies:
+      tr46: registry.npmmirror.com/tr46@0.0.3
+      webidl-conversions: registry.npmmirror.com/webidl-conversions@3.0.1
     dev: true
 
   registry.npmmirror.com/which-typed-array@1.1.11:
@@ -9098,6 +9215,12 @@ packages:
     name: yocto-queue
     version: 0.1.0
     engines: {node: '>=10'}
+    dev: true
+
+  registry.npmmirror.com/zlibjs@0.3.1:
+    resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/zlibjs/-/zlibjs-0.3.1.tgz}
+    name: zlibjs
+    version: 0.3.1
     dev: true
 
   registry.npmmirror.com/zod-validation-error@1.2.0(zod@3.22.2):

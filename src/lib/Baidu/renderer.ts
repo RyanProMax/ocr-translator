@@ -1,6 +1,4 @@
-import { isEqual, pick } from 'lodash-es';
-import log from 'electron-log/renderer';
-
+import { pick } from 'lodash-es';
 import { callApi, getUserStore, setUserStore } from 'src/renderer/utils';
 
 export enum BaiduApp {
@@ -20,13 +18,11 @@ export enum BaiduStatusCode {
 }
 
 export default class Baidu {
-  private logger = log.scope('Baidu');
   private domain = 'https://aip.baidubce.com';
   private accessToken: Record<BaiduApp, string> = {
     [BaiduApp.OCR]: '',
     [BaiduApp.Translator]: ''
   };
-  private prevState: PrevState = {};
 
   private getSecret(appKey: BaiduApp): Promise<BaiduOCRSecret | null> {
     return getUserStore(appKey);
@@ -72,11 +68,6 @@ export default class Baidu {
     if (!this.accessToken[appKey]) {
       await this.getAccessToken(appKey);
     }
-    // simple diff
-    if (isEqual(this.prevState.OCRParams, params)) {
-      this.logger.info('repeat image, skip');
-      return this.prevState.OCRResult as OCRResult;
-    }
     const resData: BaiduOCRResponseData = await callApi({
       domain: this.domain,
       api: '/rest/2.0/ocr/v1/general_basic',
@@ -101,26 +92,13 @@ export default class Baidu {
       throw new Error(resData.error_msg);
     }
     const { words_result } = resData;
-    const result: OCRResult = words_result.map(x => x.words);
-
-    this.prevState = {
-      ...this.prevState,
-      OCRParams: params,
-      OCRResult: result,
-    };
-    this.logger.info('OCR Result', result);
-    return result;
+    return words_result.map(x => x.words);
   }
 
   async fetchTranslator(params: TranslatorParameter) {
     const appKey = BaiduApp.Translator;
     if (!this.accessToken[appKey]) {
       await this.getAccessToken(appKey);
-    }
-    // simple diff
-    if (isEqual(this.prevState.translatorParams, params)) {
-      this.logger.info('repeat params, skip');
-      return this.prevState.translatorResult as TranslatorResult;
     }
     const resData: BaiduTranslatorResponseData = await callApi({
       domain: this.domain,
@@ -148,13 +126,6 @@ export default class Baidu {
       throw new Error(resData.error_msg);
     }
     const { result: { trans_result } } = resData;
-    const result: TranslatorResult = trans_result.map(x => x.dst);
-    this.prevState = {
-      ...this.prevState,
-      translatorParams: params,
-      translatorResult: result,
-    };
-    this.logger.info('Translator Result', result);
-    return result;
+    return trans_result.map(x => x.dst);
   }
 }

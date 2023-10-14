@@ -1,10 +1,12 @@
+import { isEqual } from 'lodash-es';
 import log from 'electron-log/renderer';
 import { captureVideo } from '../utils';
 import Baidu, { BaiduTranslatorLanguage } from 'src/lib/Baidu/renderer';
+import TesseractRenderer from 'src/lib/Tesseract/renderer';
 
 export enum OCRType {
   Baidu = 'Baidu',
-  Local = 'Local',
+  Tesseract = 'Tesseract',
 }
 
 export enum TranslatorType {
@@ -16,34 +18,67 @@ class Server {
   static instance: Server | null = null;
   logger = log.scope('server');
 
-  ocrType = OCRType.Baidu;
+  ocrType = OCRType.Tesseract;
   translatorType = TranslatorType.Baidu;
 
   BaiduServer = new Baidu();
+  TesseractServer = new TesseractRenderer();
 
   frame: base64 = '';
 
+  private __PREV_STATE__: PrevState = {};
   private __START__ = false;
   private __TIMER__: number | null = null;
 
-  startOCR() {
+  async startOCR() {
+    const params = { image: this.frame };
+    // simple diff
+    if (isEqual(this.__PREV_STATE__.OCRParams, params)) {
+      this.logger.info('repeat image, skip');
+      return this.__PREV_STATE__.OCRResult!;
+    }
+    let result: OCRResult = [];
     switch (this.ocrType) {
       case OCRType.Baidu: {
-        return this.BaiduServer.fetchOCR({
-          image: this.frame,
-        });
+        result = await this.BaiduServer.fetchOCR(params);
+        break;
       }
-      default: return [] as OCRResult;
+      case OCRType.Tesseract: {
+        result = await this.TesseractServer.startOCR(this.frame);
+        break;
+      }
+      default: break;
     }
+    this.__PREV_STATE__ = {
+      ...this.__PREV_STATE__,
+      OCRParams: params,
+      OCRResult: result,
+    };
+    this.logger.info('OCR Result', result);
+    return result;
   }
 
-  startTranslator(params: TranslatorParameter) {
+  async startTranslator(params: TranslatorParameter) {
+    // simple diff
+    if (isEqual(this.__PREV_STATE__.translatorParams, params)) {
+      this.logger.info('repeat params, skip');
+      return this.__PREV_STATE__.translatorResult!;
+    }
+    let result: TranslatorResult = [];
     switch (this.ocrType) {
       case OCRType.Baidu: {
-        return this.BaiduServer.fetchTranslator(params);
+        result = await this.BaiduServer.fetchTranslator(params);
+        break;
       }
-      default: return [] as TranslatorResult;
+      default: break;
     }
+    this.__PREV_STATE__ = {
+      ...this.__PREV_STATE__,
+      translatorParams: params,
+      translatorResult: result,
+    };
+    this.logger.info('Translator Result', result);
+    return result;
   }
 
   async start(): Promise<ServiceStartResult> {
