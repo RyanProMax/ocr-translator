@@ -1,24 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Rectangle, IpcRendererEvent } from 'electron/renderer';
 
 import { ipcRenderer } from '../utils';
 import { Channels } from 'src/common/constant';
 
-export default () => {
-  const boundsRef = useRef<Rectangle>();
-
+export default (onUpdate: (newBounds: Rectangle) => void) => {
   useEffect(() => {
     const updateBounds = (_: IpcRendererEvent, newBounds: Rectangle) => {
-      // console.log(Channels.UpdateCaptureBounds, newBounds);
-      boundsRef.current = newBounds;
+      onUpdate(newBounds);
     };
 
     ipcRenderer.on(Channels.UpdateCaptureBounds, updateBounds);
-
     return () => {
       ipcRenderer.removeListener(Channels.UpdateCaptureBounds, updateBounds);
     };
-  }, []);
-
-  return boundsRef;
+  }, [onUpdate]);
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { round, throttle } from 'lodash-es';
 import classnames from 'classnames';
 import log from 'electron-log/renderer';
@@ -24,7 +24,9 @@ export default () => {
   const [isResize, setIsResize] = useState(false);
   const [looperStatus, setLooperStatus] = useState(LooperStatus.Stop);
   const showControlBar = cursorEnter || isResize;
-  const boundsRef = useBounds();
+  useBounds(useCallback((bounds) => {
+    server.setBounds(bounds);
+  }, []));
 
   const toggleStart = async () => {
     switch (looperStatus) {
@@ -38,11 +40,10 @@ export default () => {
           setLooperStatus(LooperStatus.Stop);
         } else {
           const { id, bounds } = data;
-          boundsRef.current = bounds;
+          server.setBounds(bounds);
           server.startLooper({
             video: await loadStream(id),
             timeout: 200,
-            bounds: boundsRef.current,
             onSuccess: ({
               result, captureCost, looperCost, ocrCost, translatorCost
             }) => {

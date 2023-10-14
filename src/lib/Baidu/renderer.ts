@@ -63,7 +63,7 @@ export default class Baidu {
     return this.accessToken[appKey];
   }
 
-  async fetchOCR(params: OCRParameter): Promise<OCRResult> {
+  async recognize(params: OCRParameter): Promise<OCRResult> {
     const appKey = BaiduApp.OCR;
     if (!this.accessToken[appKey]) {
       await this.getAccessToken(appKey);

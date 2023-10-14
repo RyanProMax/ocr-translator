@@ -26,11 +26,12 @@ class Server {
 
   frame: base64 = '';
 
+  private __BOUNDS__?: Rectangle;
   private __PREV_STATE__: PrevState = {};
   private __START__ = false;
   private __TIMER__: number | null = null;
 
-  async startOCR() {
+  async recognize() {
     const params = { image: this.frame };
     // simple diff
     if (isEqual(this.__PREV_STATE__.OCRParams, params)) {
@@ -40,11 +41,11 @@ class Server {
     let result: OCRResult = [];
     switch (this.ocrType) {
       case OCRType.Baidu: {
-        result = await this.BaiduServer.fetchOCR(params);
+        result = await this.BaiduServer.recognize(params);
         break;
       }
       case OCRType.Tesseract: {
-        result = await this.TesseractServer.startOCR(this.frame);
+        result = await this.TesseractServer.recognize(this.frame);
         break;
       }
       default: break;
@@ -65,8 +66,8 @@ class Server {
       return this.__PREV_STATE__.translatorResult!;
     }
     let result: TranslatorResult = [];
-    switch (this.ocrType) {
-      case OCRType.Baidu: {
+    switch (this.translatorType) {
+      case TranslatorType.Baidu: {
         result = await this.BaiduServer.fetchTranslator(params);
         break;
       }
@@ -84,7 +85,7 @@ class Server {
   async start(): Promise<ServiceStartResult> {
     // OCR
     const ocrStartTime = Date.now();
-    const ocrResult = await this.startOCR();
+    const ocrResult = await this.recognize();
     const ocrCost = Date.now() - ocrStartTime;
 
     // Translator
@@ -113,16 +114,19 @@ class Server {
 
   async startLooper(params: LooperParameter) {
     const {
-      video, timeout = 0, bounds,
-      onSuccess = () => {},
-      onError = () => {},
+      video, timeout = 0,
+      onSuccess = () => { },
+      onError = () => { },
     } = params;
     try {
       this.__START__ = true;
       const startTime = Date.now();
 
       // capture frame
-      const { base64 } = captureVideo({ video, bounds });
+      const { base64 } = captureVideo({
+        video,
+        bounds: this.__BOUNDS__
+      });
       this.frame = base64;
       const captureCost = Date.now() - startTime;
 
@@ -147,6 +151,10 @@ class Server {
       this.logger.error('startLooper error', e);
       onError((e as any).message);
     }
+  }
+
+  setBounds(bounds: Rectangle) {
+    this.__BOUNDS__ = bounds;
   }
 
   stopLooper() {

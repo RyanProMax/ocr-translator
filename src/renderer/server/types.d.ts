@@ -27,15 +27,16 @@ type ServiceStartResult = {
   result: TranslatorResult
 }
 
+type Rectangle = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 type LooperParameter = {
   video: HTMLVideoElement,
   timeout: number
-  bounds?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }
   onSuccess?: (arg0: ServiceStartResult & {
     captureCost: number
     looperCost: number
