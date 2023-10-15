@@ -1,30 +1,26 @@
-import { useMemo, useState } from 'react';
-
-import { BaiduApp } from 'src/lib/Baidu/renderer';
-import { OCRType } from 'src/renderer/server';
+import { useEffect, useState } from 'react';
+import { OCRType } from '../server';
 import { getUserStore, setUserStore } from '../utils';
 
+const storeKey = 'currentOCR';
+const defaultOCRType = OCRType.Tesseract;
+
 export default () => {
-  const [type, setType] = useState(OCRType.Baidu);
+  const [currentOCR, setCurrentOCR] = useState(defaultOCRType);
 
-  const secretKey = useMemo(() => {
-    switch (type) {
-      case OCRType.Baidu: return BaiduApp.OCR;
-      default: return false;
-    }
-  }, [type]);
-
-  const getOCRSecret = () => {
-    return getUserStore(secretKey);
+  const changeCurrentOCR = (type: OCRType) => {
+    setCurrentOCR(type);
+    setUserStore(storeKey, type);
   };
 
-  const setOCRSecret = async (updateValue: BaiduOCRSecret) => {
-    const prevValue = await getOCRSecret();
-    return setUserStore(secretKey, {
-      ...prevValue,
-      ...updateValue,
-    });
-  };
+  useEffect(() => {
+    (async () => {
+      const storeCurrentOCR = (await getUserStore(storeKey)) || defaultOCRType;
+      if (storeCurrentOCR !== currentOCR) {
+        changeCurrentOCR(storeCurrentOCR);
+      }
+    })();
+  }, []);
 
-  return { type, setType, getOCRSecret, setOCRSecret };
+  return { currentOCR, changeCurrentOCR };
 };

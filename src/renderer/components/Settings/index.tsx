@@ -2,15 +2,14 @@ import { FC, useMemo, useState } from 'react';
 import Titlebar from './Titlebar';
 import Sidebar, { MenuKey } from './Sidebar';
 import Translator from './Translator';
+import OCR from './OCR';
 
 import { ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
 import usePackageJson from 'src/renderer/hooks/usePackageJson';
-import useDarkMode from 'src/renderer/hooks/useDarkMode';
+import useDarkMode, { THEME } from 'src/renderer/hooks/useDarkMode';
 
 import './index.less';
-import OCR from './OCR';
-
 
 export default () => {
   const { theme } = useDarkMode();
@@ -26,7 +25,7 @@ export default () => {
     return ipcRenderer.send(Channels.CloseSettings);
   };
 
-  const MainContent = useMemo<FC>(() => {
+  const MainContent = useMemo<FC<{ theme: THEME }>>(() => {
     switch (selectedKeys[0]) {
       case MenuKey.OCR: {
         return OCR;
@@ -51,7 +50,7 @@ export default () => {
           selectedKeys={selectedKeys}
           onClickMenuItem={onClickMenuItem}
         />
-        <MainContent />
+        <MainContent theme={theme} />
       </div>
     </div >
   );

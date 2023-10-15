@@ -1,4 +1,7 @@
-import { app, ipcMain } from 'electron';
+import {
+  app, ipcMain, shell,
+  OpenExternalOptions,
+} from 'electron';
 
 import MainWindow from './MainWindow';
 import Store from './Store';
@@ -57,6 +60,9 @@ export default class Controller {
     });
 
     ipcMain.handle(Channels.GetPackageJson, getPackageJson);
+    ipcMain.handle(Channels.OpenExternal, (_, url: string, options?: OpenExternalOptions) => {
+      return shell.openExternal(url, options);
+    });
 
     // drag event
     onDrag();

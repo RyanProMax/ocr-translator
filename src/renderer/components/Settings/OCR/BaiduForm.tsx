@@ -1,18 +1,31 @@
-import { Form, Radio, Input } from '@arco-design/web-react';
 import { useEffect, useRef } from 'react';
+import { Form, Input, Link, Switch } from '@arco-design/web-react';
+
+import { getUserStore, ipcRenderer, setUserStore } from 'src/renderer/utils';
+import { BaiduApp } from 'src/lib/Baidu/renderer';
+import { Channels } from 'src/common/constant';
 import useOCR from 'src/renderer/hooks/useOCR';
 import { OCRType } from 'src/renderer/server';
 
 const FormItem = Form.Item;
 
+const secretKey = BaiduApp.OCR;
+const getOCRSecret = () => {
+  return getUserStore(secretKey);
+};
+
+const setOCRSecret = async (updateValue: BaiduOCRSecret) => {
+  const prevValue = await getOCRSecret();
+  return setUserStore(secretKey, {
+    ...prevValue,
+    ...updateValue,
+  });
+};
+
 export default () => {
   const [form] = Form.useForm();
   const secretRef = useRef<any>();
-  const { type, getOCRSecret, setOCRSecret } = useOCR();
-
-  const onChangeType = (value: OCRType) => {
-    console.log('value', value);
-  };
+  const { currentOCR, changeCurrentOCR } = useOCR();
 
   const onChangeForm = (changeValue: Record<string, unknown>) => {
     secretRef.current = {
@@ -21,6 +34,11 @@ export default () => {
     };
     return setOCRSecret(secretRef.current);
   };
+
+  const onNavigate = () => ipcRenderer.invoke(
+    Channels.OpenExternal,
+    'https://cloud.baidu.com/doc/OCR/s/dk3iqnq51'
+  );
 
   useEffect(() => {
     (async () => {
@@ -36,29 +54,34 @@ export default () => {
   }, []);
 
   return (
-    <div className='settings-main-content settings-OCR'>
+    <div className='settings-OCR__form-wrapper'>
+      <p className='settings-OCR__form-desc'>
+        在线OCR接口，需注册使用，并填写client_id及client_secret，详见
+        <Link status='warning' onClick={onNavigate}>
+          教程
+        </Link>
+      </p>
       <Form
         form={form}
         autoComplete='off'
+        labelAlign='left'
         labelCol={{
-          span: 6,
+          span: 5,
         }}
         wrapperCol={{
-          span: 16,
+          span: 19,
         }}
         onChange={onChangeForm}
         className='settings-OCR__form'
       >
-        <FormItem label='Type'>
-          <Radio.Group
-            type='button'
-            options={Object.entries(OCRType).map(([key, value]) => ({
-              label: key,
-              value,
-              disabled: value !== OCRType.Baidu
-            }))}
-            value={type}
-            onChange={onChangeType}
+        <FormItem label='使用百度OCR' >
+          <Switch
+            checked={currentOCR === OCRType.Baidu}
+            checkedText='ON'
+            uncheckedText='OFF'
+            onChange={(value) => {
+              changeCurrentOCR(value ? OCRType.Baidu : OCRType.Tesseract);
+            }}
           />
         </FormItem>
         <FormItem label='client_id' field='client_id'>
