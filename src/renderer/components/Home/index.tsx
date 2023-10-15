@@ -4,10 +4,12 @@ import classnames from 'classnames';
 import log from 'electron-log/renderer';
 
 import { ipcRenderer, loadStream } from 'src/renderer/utils';
-import { server } from 'src/renderer/server';
+import { TranslatorType, server } from 'src/renderer/server';
 import { Channels } from 'src/common/constant';
 import useDrag from 'src/renderer/hooks/useDrag';
 import useBounds from 'src/renderer/hooks/useBounds';
+import useOCR from 'src/renderer/hooks/useOCR';
+import useTranslator from 'src/renderer/hooks/useTranslator';
 
 import ControlBar, { Icon } from './ControlBar';
 import Tips from './Tips';
@@ -25,8 +27,10 @@ export default () => {
   const [looperStatus, setLooperStatus] = useState(LooperStatus.Stop);
   const showControlBar = cursorEnter || isResize;
   useBounds(useCallback((bounds) => {
-    server.setBounds(bounds);
+    server.update({ bounds });
   }, []));
+  const { currentOCR } = useOCR();
+  const { currentTranslator } = useTranslator();
 
   const toggleStart = async () => {
     switch (looperStatus) {
@@ -40,7 +44,11 @@ export default () => {
           setLooperStatus(LooperStatus.Stop);
         } else {
           const { id, bounds } = data;
-          server.setBounds(bounds);
+          server.update({
+            ocrType: currentOCR,
+            translatorType: currentTranslator,
+            bounds,
+          });
           server.startLooper({
             video: await loadStream(id),
             timeout: 200,
@@ -53,10 +61,18 @@ export default () => {
               })));
               setTips({
                 type: 'info',
-                message: `cost ${round(looperCost / 1000, 2)}s` +
-                  `(capture: ${captureCost}ms,` +
-                  (ocrCost > 0 ? ` OCR: ${ocrCost}ms,` : ' OCR: skip') +
-                  (translatorCost > 0 ? ` translator: ${translatorCost}ms)` : ' translator: skip')
+                message: `耗时: ${round(looperCost / 1000, 2)}s` +
+                  ` (画面捕获: ${captureCost}ms,` +
+                  (ocrCost > 0
+                    ? ` 文字识别: ${ocrCost}ms,`
+                    : ' 文字识别: 跳过,'
+                  ) +
+                  (server.translatorType === TranslatorType.None
+                    ? ' 未启用翻译, 只展示文字识别结果'
+                    : translatorCost > 0
+                      ? ` 翻译: ${translatorCost}ms)`
+                      : ' 翻译: 跳过'
+                  )
               });
             },
             onError: error => {

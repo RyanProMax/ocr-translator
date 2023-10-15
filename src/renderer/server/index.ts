@@ -19,20 +19,23 @@ class Server {
   static instance: Server | null = null;
   logger = log.scope('server');
 
-  ocrType = OCRType.Tesseract;
-  translatorType = TranslatorType.Baidu;
+  ocrType?: OCRType;
+  translatorType?: TranslatorType;
+  bounds?: Rectangle;
 
   BaiduServer = new Baidu();
   TesseractServer = new TesseractRenderer();
 
   frame: base64 = '';
 
-  private __BOUNDS__?: Rectangle;
   private __PREV_STATE__: PrevState = {};
   private __START__ = false;
   private __TIMER__: number | null = null;
 
   async recognize() {
+    if (!this.ocrType) {
+      throw new Error('OCRType not defined');
+    }
     const params = { image: this.frame };
     // simple diff
     if (isEqual(this.__PREV_STATE__.OCRParams, params)) {
@@ -90,7 +93,7 @@ class Server {
     const ocrCost = Date.now() - ocrStartTime;
 
     // Translator
-    if (ocrResult.length > 0) {
+    if (this.translatorType !== TranslatorType.None && ocrResult.length > 0) {
       const translatorStartTime = Date.now();
       const translatorResult = await this.startTranslator({
         from: BaiduTranslatorLanguage.Auto,
@@ -109,7 +112,7 @@ class Server {
     return {
       ocrCost,
       translatorCost: 0,
-      result: []
+      result: ocrResult
     };
   }
 
@@ -126,17 +129,17 @@ class Server {
       // capture frame
       const { base64 } = captureVideo({
         video,
-        bounds: this.__BOUNDS__
+        bounds: this.bounds
       });
       this.frame = base64;
       const captureCost = Date.now() - startTime;
 
-      const translatorResult = await server.start();
+      const startResult = await server.start();
       const looperCost = Date.now() - startTime;
 
       if (this.__START__) {
         onSuccess({
-          ...translatorResult,
+          ...startResult,
           captureCost,
           looperCost,
         });
@@ -154,8 +157,14 @@ class Server {
     }
   }
 
-  setBounds(bounds: Rectangle) {
-    this.__BOUNDS__ = bounds;
+  update({ ocrType, translatorType, bounds }: Partial<{
+    ocrType: OCRType,
+    translatorType: TranslatorType,
+    bounds: Rectangle
+  }>) {
+    ocrType && (this.ocrType = ocrType);
+    translatorType && (this.translatorType = translatorType);
+    bounds && (this.bounds = bounds);
   }
 
   stopLooper() {
