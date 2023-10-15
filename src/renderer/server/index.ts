@@ -10,6 +10,7 @@ export enum OCRType {
 }
 
 export enum TranslatorType {
+  None = 'None',
   Baidu = 'Baidu',
   Local = 'Local',
 }

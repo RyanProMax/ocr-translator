@@ -1,22 +1,22 @@
 import { useEffect, useRef } from 'react';
 import { Form, Input, Link, Switch } from '@arco-design/web-react';
 
-import { getUserStore, ipcRenderer, setUserStore } from 'src/renderer/utils';
+import { getUserStore, setUserStore, ipcRenderer } from 'src/renderer/utils';
 import { BaiduApp } from 'src/lib/Baidu/renderer';
 import { Channels } from 'src/common/constant';
 
-import { OCRType } from 'src/renderer/server';
-import useOCR from 'src/renderer/hooks/useOCR';
+import { TranslatorType } from 'src/renderer/server';
+import useTranslator from 'src/renderer/hooks/useTranslator';
 
 const FormItem = Form.Item;
 
-const secretKey = BaiduApp.OCR;
-const getOCRSecret = () => {
+const secretKey = BaiduApp.Translator;
+const getTranslatorSecret = () => {
   return getUserStore(secretKey);
 };
 
-const setOCRSecret = async (updateValue: BaiduOCRSecret) => {
-  const prevValue = await getOCRSecret();
+const setTranslatorSecret = async (updateValue: BaiduOCRSecret) => {
+  const prevValue = await getTranslatorSecret();
   return setUserStore(secretKey, {
     ...prevValue,
     ...updateValue,
@@ -26,38 +26,38 @@ const setOCRSecret = async (updateValue: BaiduOCRSecret) => {
 export default () => {
   const [form] = Form.useForm();
   const secretRef = useRef<any>();
-  const { currentOCR, changeCurrentOCR } = useOCR();
+  const { currentTranslator, changeCurrentTranslator } = useTranslator();
 
   const onChangeForm = (changeValue: Record<string, unknown>) => {
     secretRef.current = {
       ...secretRef.current,
       ...changeValue,
     };
-    return setOCRSecret(secretRef.current);
+    return setTranslatorSecret(secretRef.current);
   };
 
   const onNavigate = () => ipcRenderer.invoke(
     Channels.OpenExternal,
-    'https://cloud.baidu.com/doc/OCR/s/dk3iqnq51'
+    'https://cloud.baidu.com/doc/MT/s/2l317egif'
   );
 
   useEffect(() => {
     (async () => {
-      const OCRSecret = await getOCRSecret();
-      if (OCRSecret) {
-        secretRef.current = OCRSecret;
+      const translatorSecret = await getTranslatorSecret();
+      if (translatorSecret) {
+        secretRef.current = translatorSecret;
         form.setFieldsValue({
-          client_id: OCRSecret.client_id,
-          client_secret: OCRSecret.client_secret,
+          client_id: translatorSecret.client_id,
+          client_secret: translatorSecret.client_secret,
         });
       }
     })();
   }, []);
 
   return (
-    <div className='settings-OCR__form-wrapper'>
+    <div className='settings-translator__form-wrapper'>
       <p className='settings-OCR__form-desc'>
-        在线OCR接口，需注册使用，并填写client_id及client_secret，详见
+        在线翻译接口，需注册使用，并填写client_id及client_secret，详见
         <Link status='warning' onClick={onNavigate}>
           教程
         </Link>
@@ -73,15 +73,15 @@ export default () => {
           span: 19,
         }}
         onChange={onChangeForm}
-        className='settings-OCR__form'
+        className='settings-translator__form'
       >
         <FormItem label='使用百度OCR' >
           <Switch
-            checked={currentOCR === OCRType.Baidu}
+            checked={currentTranslator === TranslatorType.Baidu}
             checkedText='ON'
             uncheckedText='OFF'
             onChange={(value) => {
-              changeCurrentOCR(value ? OCRType.Baidu : OCRType.Tesseract);
+              changeCurrentTranslator(value ? TranslatorType.Baidu : TranslatorType.None);
             }}
           />
         </FormItem>

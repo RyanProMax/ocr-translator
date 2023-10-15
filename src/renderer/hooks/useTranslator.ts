@@ -1,30 +1,26 @@
-import { useMemo, useState } from 'react';
-
-import { BaiduApp } from 'src/lib/Baidu/renderer';
-import { TranslatorType } from 'src/renderer/server';
+import { useEffect, useState } from 'react';
+import { TranslatorType } from '../server';
 import { getUserStore, setUserStore } from '../utils';
 
+const storeKey = 'currentTranslator';
+const defaultOCRType = TranslatorType.Baidu;
+
 export default () => {
-  const [type, setType] = useState(TranslatorType.Baidu);
+  const [currentTranslator, setCurrentTranslator] = useState(defaultOCRType);
 
-  const secretKey = useMemo(() => {
-    switch (type) {
-      case TranslatorType.Baidu: return BaiduApp.Translator;
-      default: return false;
-    }
-  }, [type]);
-
-  const getTranslatorSecret = () => {
-    return getUserStore(secretKey);
+  const changeCurrentTranslator = (type: TranslatorType) => {
+    setCurrentTranslator(type);
+    setUserStore(storeKey, type);
   };
 
-  const setTranslatorSecret = async (updateValue: BaiduOCRSecret) => {
-    const prevValue = await getTranslatorSecret();
-    return setUserStore(secretKey, {
-      ...prevValue,
-      ...updateValue,
-    });
-  };
+  useEffect(() => {
+    (async () => {
+      const storeCurrentTranslator = (await getUserStore(storeKey)) || defaultOCRType;
+      if (storeCurrentTranslator !== currentTranslator) {
+        changeCurrentTranslator(storeCurrentTranslator);
+      }
+    })();
+  }, []);
 
-  return { type, setType, getTranslatorSecret, setTranslatorSecret };
+  return { currentTranslator, changeCurrentTranslator };
 };

@@ -1,8 +1,8 @@
 import { FC, useMemo, useState } from 'react';
 import Titlebar from './Titlebar';
 import Sidebar, { MenuKey } from './Sidebar';
-import Translator from './Translator';
 import OCR from './OCR';
+import Translator from './Translator';
 
 import { ipcRenderer } from 'src/renderer/utils';
 import { Channels } from 'src/common/constant';
