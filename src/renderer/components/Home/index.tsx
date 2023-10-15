@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { round, throttle } from 'lodash-es';
 import classnames from 'classnames';
 import log from 'electron-log/renderer';
@@ -6,10 +6,12 @@ import log from 'electron-log/renderer';
 import { ipcRenderer, loadStream } from 'src/renderer/utils';
 import { TranslatorType, server } from 'src/renderer/server';
 import { Channels } from 'src/common/constant';
+
 import useDrag from 'src/renderer/hooks/useDrag';
 import useBounds from 'src/renderer/hooks/useBounds';
 import useOCR from 'src/renderer/hooks/useOCR';
 import useTranslator from 'src/renderer/hooks/useTranslator';
+import useMode, { Mode } from 'src/renderer/hooks/useMode';
 
 import ControlBar, { Icon } from './ControlBar';
 import Tips from './Tips';
@@ -21,59 +23,78 @@ const homeLogger = log.scope('home');
 
 export default () => {
   const { cursorEnter, mouseEvent } = useDrag();
+  useBounds(useCallback((bounds) => {
+    if (screenSourceRef.current) {
+      screenSourceRef.current.bounds = bounds;
+    }
+    server.update({ bounds });
+  }, []));
+  const { currentOCR } = useOCR();
+  const { currentTranslator } = useTranslator();
+  const { currentMode, toggleMode } = useMode();
+
+  const screenSourceRef = useRef<any>();
   const [content, setContent] = useState(DEFAULT_TEXT);
   const [tips, setTips] = useState(DEFAULT_TIPS);
   const [isResize, setIsResize] = useState(false);
   const [looperStatus, setLooperStatus] = useState(LooperStatus.Stop);
   const showControlBar = cursorEnter || isResize;
-  useBounds(useCallback((bounds) => {
-    server.update({ bounds });
-  }, []));
-  const { currentOCR } = useOCR();
-  const { currentTranslator } = useTranslator();
+
+  const showResultTips = (startResult: ServiceStartResult) => {
+    const {
+      result, looperCost, captureCost, ocrCost, translatorCost
+    } = startResult;
+    setContent(result.map(text => ({
+      text,
+      style: DEFAULT_STYLE,
+    })));
+    return setTips({
+      type: 'info',
+      message: `耗时: ${round(looperCost / 1000, 2)}s` +
+        ` (画面捕获: ${captureCost}ms,` +
+        (ocrCost > 0
+          ? ` 文字识别: ${ocrCost}ms,`
+          : ' 文字识别: 跳过,'
+        ) +
+        (server.translatorType === TranslatorType.None
+          ? ' 未启用翻译, 只展示文字识别结果'
+          : translatorCost > 0
+            ? ` 翻译: ${translatorCost}ms)`
+            : ' 翻译: 跳过'
+        )
+    });
+  };
 
   const toggleStart = async () => {
     switch (looperStatus) {
       case LooperStatus.Stop: {
         setLooperStatus(LooperStatus.Loading);
-        const result = await ipcRenderer.invoke(Channels.GetScreenSource);
-        homeLogger.info('invoke GetScreenSource', result);
-        const { errorMessage, data } = result;
-        if (errorMessage) {
-          setTips({ type: 'error', message: `Error: ${errorMessage}` });
+        if (!screenSourceRef.current) {
+          const result = await ipcRenderer.invoke(Channels.GetScreenSource);
+          homeLogger.info('invoke GetScreenSource', result);
+          const { errorMessage, data } = result;
+          if (errorMessage) {
+            setLooperStatus(LooperStatus.Stop);
+            throw new Error(errorMessage);
+          }
+          screenSourceRef.current = data;
+        }
+        const { id, bounds } = screenSourceRef.current;
+        server.update({
+          ocrType: currentOCR,
+          translatorType: currentTranslator,
+          bounds,
+          video: await loadStream(id),
+        });
+        if (currentMode === Mode.Manual) {
+          const startResult = await server.start();
+          showResultTips(startResult);
           setLooperStatus(LooperStatus.Stop);
         } else {
-          const { id, bounds } = data;
-          server.update({
-            ocrType: currentOCR,
-            translatorType: currentTranslator,
-            bounds,
-          });
           server.startLooper({
-            video: await loadStream(id),
             timeout: 200,
-            onSuccess: ({
-              result, captureCost, looperCost, ocrCost, translatorCost
-            }) => {
-              setContent(result.map(text => ({
-                text,
-                style: DEFAULT_STYLE,
-              })));
-              setTips({
-                type: 'info',
-                message: `耗时: ${round(looperCost / 1000, 2)}s` +
-                  ` (画面捕获: ${captureCost}ms,` +
-                  (ocrCost > 0
-                    ? ` 文字识别: ${ocrCost}ms,`
-                    : ' 文字识别: 跳过,'
-                  ) +
-                  (server.translatorType === TranslatorType.None
-                    ? ' 未启用翻译, 只展示文字识别结果'
-                    : translatorCost > 0
-                      ? ` 翻译: ${translatorCost}ms)`
-                      : ' 翻译: 跳过'
-                  )
-              });
+            onSuccess: (startResult) => {
+              showResultTips(startResult);
             },
             onError: error => {
               setTips({
@@ -100,22 +121,33 @@ export default () => {
     }
   };
 
-  const onClickIcon = (type: Icon) => {
-    homeLogger.info('onClickIcon', type);
-    switch (type) {
-      case Icon.ScreenCapture: {
-        return ipcRenderer.send(Channels.CropScreenShow);
+  const onClickIcon = (type: Icon, ...args: unknown[]) => {
+    try {
+      homeLogger.info('onClickIcon', type);
+      switch (type) {
+        case Icon.ScreenCapture: {
+          return ipcRenderer.send(Channels.CropScreenShow);
+        }
+        case Icon.TriggerStart: {
+          return toggleStart();
+        }
+        case Icon.Close: {
+          return ipcRenderer.send(Channels.Quit);
+        }
+        case Icon.Settings: {
+          return ipcRenderer.send(Channels.OpenSettings);
+        }
+        case Icon.Switch: {
+          return toggleMode(args[0] as boolean);
+        }
+        default: return;
       }
-      case Icon.TriggerStart: {
-        return toggleStart();
-      }
-      case Icon.Close: {
-        return ipcRenderer.send(Channels.Quit);
-      }
-      case Icon.Settings: {
-        return ipcRenderer.send(Channels.OpenSettings);
-      }
-      default: return;
+    } catch (e) {
+      homeLogger.error(e);
+      setTips({
+        type: 'error',
+        message: `Error: ${(e as any).message}`,
+      });
     }
   };
 
@@ -139,6 +171,7 @@ export default () => {
       <ControlBar
         show={showControlBar}
         looperStatus={looperStatus}
+        currentMode={currentMode}
         onClickIcon={onClickIcon}
       />
       <div className='home-content'>

@@ -22,8 +22,10 @@ type TranslatorParameter = {
 type TranslatorResult = string[];
 
 type ServiceStartResult = {
-  ocrCost: number,
-  translatorCost: number,
+  captureCost: number
+  ocrCost: number
+  translatorCost: number
+  looperCost: number
   result: TranslatorResult
 }
 
@@ -35,10 +37,8 @@ type Rectangle = {
 }
 
 type LooperParameter = {
-  video: HTMLVideoElement,
   timeout: number
   onSuccess?: (arg0: ServiceStartResult & {
-    captureCost: number
     looperCost: number
   }) => unknown
   onError?: (error: string) => unknown

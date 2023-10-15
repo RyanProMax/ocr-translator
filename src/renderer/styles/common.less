@@ -33,3 +33,42 @@ body {
     --color-rgb-22: 22, 22, 22;
   }
 }
+
+@switchMiniHeight: 18px;
+
+.arco-switch--mini {
+  width: 52px;
+  height: @switchMiniHeight;
+  line-height: @switchMiniHeight;
+
+  .arco-switch-dot {
+    height: (@switchMiniHeight - 8px);
+    width: (@switchMiniHeight - 8px);
+  }
+
+  .arco-switch-text-holder {
+    margin: 0 8px 0 20px;
+  }
+
+  .arco-switch-text {
+    left: 20px;
+  }
+
+  .switchSlideText-exit-active {
+    left: 20px !important;
+  }
+
+  &.arco-switch-checked {
+    .arco-switch-dot {
+      left: calc(100% - (@switchMiniHeight - 8px) - 4px);
+    }
+
+    .arco-switch-text-holder {
+      margin: 0 20px 0 8px;
+    }
+
+    .arco-switch-text {
+      left: 8px;
+    }
+  }
+}

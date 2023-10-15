@@ -22,6 +22,7 @@ class Server {
   ocrType?: OCRType;
   translatorType?: TranslatorType;
   bounds?: Rectangle;
+  video?: HTMLVideoElement;
 
   BaiduServer = new Baidu();
   TesseractServer = new TesseractRenderer();
@@ -87,6 +88,17 @@ class Server {
   }
 
   async start(): Promise<ServiceStartResult> {
+    if (!this.video) {
+      throw new Error('video not defined');
+    }
+    const startTime = Date.now();
+    // capture frame
+    const { base64 } = captureVideo({
+      video: this.video,
+      bounds: this.bounds
+    });
+    this.frame = base64;
+    const captureCost = Date.now() - startTime;
     // OCR
     const ocrStartTime = Date.now();
     const ocrResult = await this.recognize();
@@ -103,46 +115,35 @@ class Server {
       const translatorCost = Date.now() - translatorStartTime;
 
       return {
+        captureCost,
         ocrCost,
         translatorCost,
+        looperCost: Date.now() - startTime,
         result: translatorResult,
       };
     }
 
     return {
+      captureCost,
       ocrCost,
       translatorCost: 0,
+      looperCost: Date.now() - startTime,
       result: ocrResult
     };
   }
 
   async startLooper(params: LooperParameter) {
     const {
-      video, timeout = 0,
+      timeout = 0,
       onSuccess = () => { },
       onError = () => { },
     } = params;
     try {
       this.__START__ = true;
-      const startTime = Date.now();
-
-      // capture frame
-      const { base64 } = captureVideo({
-        video,
-        bounds: this.bounds
-      });
-      this.frame = base64;
-      const captureCost = Date.now() - startTime;
-
       const startResult = await server.start();
-      const looperCost = Date.now() - startTime;
 
       if (this.__START__) {
-        onSuccess({
-          ...startResult,
-          captureCost,
-          looperCost,
-        });
+        onSuccess(startResult);
 
         if (timeout > 0) {
           this.clearTimer();
@@ -157,14 +158,16 @@ class Server {
     }
   }
 
-  update({ ocrType, translatorType, bounds }: Partial<{
-    ocrType: OCRType,
-    translatorType: TranslatorType,
+  update({ ocrType, translatorType, bounds, video }: Partial<{
+    ocrType: OCRType
+    translatorType: TranslatorType
     bounds: Rectangle
+    video: HTMLVideoElement
   }>) {
     ocrType && (this.ocrType = ocrType);
     translatorType && (this.translatorType = translatorType);
     bounds && (this.bounds = bounds);
+    video && (this.video = video);
   }
 
   stopLooper() {
