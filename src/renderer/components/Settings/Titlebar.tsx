@@ -8,7 +8,7 @@ export default ({ title, onClose }: {
     <div className='settings-titlebar'>
       <span>{title}</span>
       <div className='settings-titlebar__icon-wrapper'>
-        <div title='close' className='settings-titlebar__icon'>
+        <div title='关闭' className='settings-titlebar__icon'>
           <IconClose onClick={onClose} />
         </div>
       </div>

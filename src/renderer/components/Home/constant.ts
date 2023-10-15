@@ -1,15 +1,19 @@
 export enum FontSize {
-  Large = '32px',
-  Normal = '24px',
+  Large = '24px',
+  Normal = '20px',
 }
 
 export const DEFAULT_STYLE = { fontSize: FontSize.Normal };
 
 export const DEFAULT_TEXT = [
-  { text: 'Welcome to  OCR Translator.', style: DEFAULT_STYLE },
-  { text: '1. click [capture screen]', style: DEFAULT_STYLE },
-  { text: '2. select region', style: DEFAULT_STYLE },
-  { text: '3. click [start]', style: DEFAULT_STYLE },
+  {
+    text: '欢迎使用 OCR Translator', style: {
+      fontSize: FontSize.Large
+    }
+  },
+  { text: '1. 点击 [捕获画面]', style: DEFAULT_STYLE },
+  { text: '2. 选择区域', style: DEFAULT_STYLE },
+  { text: '3. 点击 [开始]', style: DEFAULT_STYLE },
 ];
 
 export const DEFAULT_TIPS: ITips = { type: 'info', message: '' };

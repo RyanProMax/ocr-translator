@@ -32,9 +32,9 @@ export default ({ show, looperStatus, onClickIcon }: {
 
   const looperTitle = useMemo(() => {
     switch (looperStatus) {
-      case LooperStatus.Loading: return 'loading';
-      case LooperStatus.Running: return 'stop';
-      default: return 'start';
+      case LooperStatus.Loading: return '加载中';
+      case LooperStatus.Running: return '停止';
+      default: return '开始';
     }
   }, [looperStatus]);
 
@@ -47,21 +47,21 @@ export default ({ show, looperStatus, onClickIcon }: {
       <div className='home-control-bar__left'>
       </div>
       <div className='home-control-bar__center'>
-        <div title='capture screen' className='home-control-bar__icon-wrapper'>
+        <div title='捕获画面' className='home-control-bar__icon-wrapper'>
           <IconScreenCapture className='arco-icon__native' onClick={() => onClickIcon(Icon.ScreenCapture)} />
         </div>
         <div title={looperTitle} className='home-control-bar__icon-wrapper'>
           <IconLooper onClick={() => onClickIcon(Icon.TriggerStart)} />
         </div>
-        <div title='setting' className='home-control-bar__icon-wrapper'>
+        <div title='设置' className='home-control-bar__icon-wrapper'>
           <IconSetting className='arco-icon__native' onClick={() => onClickIcon(Icon.Settings)} />
         </div>
       </div>
       <div className='home-control-bar__right'>
-        <div title='toggle theme' className='home-control-bar__icon-wrapper'>
+        <div title='切换主题' className='home-control-bar__icon-wrapper'>
           <ThemeIcon onClick={toggleTheme} />
         </div>
-        <div title='close' className='home-control-bar__icon-wrapper'>
+        <div title='关闭' className='home-control-bar__icon-wrapper'>
           <IconClose onClick={() => onClickIcon(Icon.Close)} />
         </div>
       </div>
