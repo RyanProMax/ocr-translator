@@ -16,7 +16,7 @@ export const createTransparentImage = () => {
 
 export const ipcRenderer = window.__ELECTRON__.ipcRenderer;
 
-export const loadStream = async (sourceId: string) => {
+export const loadStream = async (sourceId: string): Promise<HTMLVideoElement> => {
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
@@ -26,10 +26,14 @@ export const loadStream = async (sourceId: string) => {
       }
     }
   } as any);
-  const video = document.createElement('video');
-  video.srcObject = stream;
-  video.onloadedmetadata = () => video.play();
-  return video;
+  return new Promise(resolve => {
+    const video = document.createElement('video');
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play();
+      resolve(video);
+    };
+  });
 };
 
 export const captureVideo = ({

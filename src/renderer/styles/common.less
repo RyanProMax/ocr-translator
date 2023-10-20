@@ -1,5 +1,13 @@
 @import './scroll-bar.less';
 
+@font-family: 'FangYuanTiVF-Thin';
+
+@font-face {
+  font-family: @font-family;
+  src: url('./fonts/AlimamaFangYuanTiVF-Thin.woff2')format('woff2'),
+    url('./fonts/AlimamaFangYuanTiVF-Thin.woff');
+}
+
 
 @color-primary: rgb(var(--primary-6));
 @color-error: rgb(var(--red-5));
@@ -10,7 +18,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Georgia';
+  font-family: @font-family;
   .scroll-bar();
 
   background-color: rgba(var(--color-bg-1), 0.9);

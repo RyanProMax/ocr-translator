@@ -8,7 +8,8 @@ export const DEFAULT_STYLE = { fontSize: FontSize.Normal };
 export const DEFAULT_TEXT = [
   {
     text: '欢迎使用 OCR Translator', style: {
-      fontSize: FontSize.Large
+      fontSize: FontSize.Large,
+      marginBottom: '6px',
     }
   },
   { text: '1. 点击 [捕获画面]', style: DEFAULT_STYLE },
