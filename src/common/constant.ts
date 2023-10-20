@@ -13,6 +13,7 @@ export enum Channels {
   Resize = 'Resize',
   GetPackageJson = 'GetPackageJson',
   OpenExternal = 'OpenExternal',
+  Broadcast = 'Broadcast',
 
   // capture screen event
   CropScreenShow = 'CropScreenShow',
@@ -20,7 +21,6 @@ export enum Channels {
   CropScreenConfirm = 'CropScreenConfirm',
   HideCaptureWindow = 'HideCaptureWindow',
   UpdateCropArea = 'UpdateCropArea',
-  UpdateCaptureBounds = 'UpdateCaptureBounds',
 
   // OCR
   GetScreenSource = 'GetScreenSource',
@@ -32,4 +32,5 @@ export enum Channels {
   // setting
   OpenSettings = 'OpenSettings',
   CloseSettings = 'CloseSettings',
+  UpdateSettings = 'UpdateSettings',
 }

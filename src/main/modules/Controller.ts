@@ -63,6 +63,18 @@ export default class Controller {
     ipcMain.handle(Channels.OpenExternal, (_, url: string, options?: OpenExternalOptions) => {
       return shell.openExternal(url, options);
     });
+    ipcMain.on(Channels.Broadcast, (event, channel: Channels, ...data: unknown[]) => {
+      const { sender } = event;
+      const BroadcastList = [
+        this.mainWindow?.browserWindow,
+        this.captureScreen?.captureWindow,
+        this.captureScreen?.cropWindow,
+      ];
+      const filterBroadcastList = BroadcastList.filter(w => w && w.webContents.id !== sender.id);
+      filterBroadcastList.forEach(w => {
+        w?.webContents?.send(channel, ...data);
+      });
+    });
 
     // drag event
     onDrag();

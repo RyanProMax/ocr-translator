@@ -4,11 +4,11 @@ import classnames from 'classnames';
 import log from 'electron-log/renderer';
 
 import { ipcRenderer, loadStream } from 'src/renderer/utils';
-import { TranslatorType, server } from 'src/renderer/server';
+import { ServerConfig, TranslatorType, server } from 'src/renderer/server';
 import { Channels } from 'src/common/constant';
 
 import useDrag from 'src/renderer/hooks/useDrag';
-import useBounds from 'src/renderer/hooks/useBounds';
+import useSettings from 'src/renderer/hooks/useSettings';
 import useOCR from 'src/renderer/hooks/useOCR';
 import useTranslator from 'src/renderer/hooks/useTranslator';
 import useMode, { Mode } from 'src/renderer/hooks/useMode';
@@ -22,18 +22,21 @@ import './index.less';
 const homeLogger = log.scope('home');
 
 export default () => {
+  const { currentMode, toggleMode } = useMode();
   const { cursorEnter, mouseEvent } = useDrag();
-  useBounds(useCallback((bounds) => {
-    if (screenSourceRef.current) {
-      screenSourceRef.current.bounds = bounds;
-    }
-    server.update({ bounds });
-  }, []));
   const { currentOCR } = useOCR();
   const { currentTranslator } = useTranslator();
-  const { currentMode, toggleMode } = useMode();
+  useSettings(useCallback((_, data) => {
+    serverConfigRef.current = {
+      ...serverConfigRef.current,
+      ...data,
+    };
+  }, []));
 
-  const screenSourceRef = useRef<any>();
+  const serverConfigRef = useRef<Partial<ServerConfig>>({
+    ocrType: currentOCR,
+    translatorType: currentTranslator,
+  });
   const [content, setContent] = useState(DEFAULT_TEXT);
   const [tips, setTips] = useState(DEFAULT_TIPS);
   const [isResize, setIsResize] = useState(false);
@@ -69,7 +72,7 @@ export default () => {
     switch (looperStatus) {
       case LooperStatus.Stop: {
         setLooperStatus(LooperStatus.Loading);
-        if (!screenSourceRef.current) {
+        if (!serverConfigRef.current.video) {
           const result = await ipcRenderer.invoke(Channels.GetScreenSource);
           homeLogger.info('invoke GetScreenSource', result);
           const { errorMessage, data } = result;
@@ -77,15 +80,14 @@ export default () => {
             setLooperStatus(LooperStatus.Stop);
             throw new Error(errorMessage);
           }
-          screenSourceRef.current = data;
+          const { id, bounds } = data;
+          const video = await loadStream(id);
+          serverConfigRef.current = {
+            ...serverConfigRef.current,
+            video, bounds,
+          };
         }
-        const { id, bounds } = screenSourceRef.current;
-        server.update({
-          ocrType: currentOCR,
-          translatorType: currentTranslator,
-          bounds,
-          video: await loadStream(id),
-        });
+        server.update(serverConfigRef.current);
         if (currentMode === Mode.Manual) {
           const startResult = await server.start();
           showResultTips(startResult);

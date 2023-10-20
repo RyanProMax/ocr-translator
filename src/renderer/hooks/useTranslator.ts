@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TranslatorType } from '../server';
-import { getUserStore, setUserStore } from '../utils';
+import { getUserStore, setUserStore, ipcRenderer } from '../utils';
+import { Channels } from 'src/common/constant';
 
 const storeKey = 'currentTranslator';
 const defaultOCRType = TranslatorType.Baidu;
@@ -11,6 +12,9 @@ export default () => {
   const changeCurrentTranslator = (type: TranslatorType) => {
     setCurrentTranslator(type);
     setUserStore(storeKey, type);
+    ipcRenderer.send(Channels.Broadcast, Channels.UpdateSettings, {
+      translatorType: type,
+    });
   };
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { OCRType } from '../server';
-import { getUserStore, setUserStore } from '../utils';
+import { getUserStore, setUserStore, ipcRenderer } from '../utils';
+import { Channels } from 'src/common/constant';
 
 const storeKey = 'currentOCR';
 const defaultOCRType = OCRType.Tesseract;
@@ -11,6 +12,9 @@ export default () => {
   const changeCurrentOCR = (type: OCRType) => {
     setCurrentOCR(type);
     setUserStore(storeKey, type);
+    ipcRenderer.send(Channels.Broadcast, Channels.UpdateSettings, {
+      ocrType: type,
+    });
   };
 
   useEffect(() => {

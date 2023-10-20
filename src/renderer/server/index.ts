@@ -15,6 +15,13 @@ export enum TranslatorType {
   Local = 'Local',
 }
 
+export type ServerConfig = {
+  ocrType: OCRType
+  translatorType: TranslatorType
+  bounds: Rectangle
+  video: HTMLVideoElement
+}
+
 class Server {
   static instance: Server | null = null;
   logger = log.scope('server');
@@ -158,12 +165,9 @@ class Server {
     }
   }
 
-  update({ ocrType, translatorType, bounds, video }: Partial<{
-    ocrType: OCRType
-    translatorType: TranslatorType
-    bounds: Rectangle
-    video: HTMLVideoElement
-  }>) {
+  update(serverConfig: Partial<ServerConfig>) {
+    this.logger.info('update', serverConfig);
+    const { ocrType, translatorType, bounds, video } = serverConfig;
     ocrType && (this.ocrType = ocrType);
     translatorType && (this.translatorType = translatorType);
     bounds && (this.bounds = bounds);

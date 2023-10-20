@@ -86,7 +86,7 @@ export default class CaptureScreen {
       const bounds = this.captureWindow.getBounds();
       const { mainWindow } = this.controller;
       if (mainWindow) {
-        mainWindow.browserWindow.webContents.send(Channels.UpdateCaptureBounds, bounds);
+        mainWindow.browserWindow.webContents.send(Channels.UpdateSettings, { bounds });
       }
     }, 100));
 
